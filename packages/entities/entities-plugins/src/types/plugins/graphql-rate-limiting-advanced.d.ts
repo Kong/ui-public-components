@@ -1,5 +1,5 @@
-import type { Field, CommonSchemaFields } from '../../types/plugins/shared'
+import type { Field } from '../../types/plugins/shared'
 
-export interface GraphQLRateLimitingAdvancedSchema extends CommonSchemaFields{
+export interface GraphQLRateLimitingAdvancedFormSchema {
   'config-strategy': Field,
 }

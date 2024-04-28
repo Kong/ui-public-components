@@ -2,26 +2,26 @@ import { useStringHelpers } from '@kong-ui-public/entities-shared'
 import type { FGCollapsibleOptions, FGSlots } from '@kong-ui-public/forms'
 import { customFields, getSharedFormName } from '@kong-ui-public/forms'
 import { PLUGIN_METADATA } from '../definitions/metadata'
-import { aiPromptDecoratorSchema } from '../definitions/schemas/AIPromptDecorator'
-import { aiPromptTemplateSchema } from '../definitions/schemas/AIPromptTemplate'
-import { aiRateLimitingAdvancedSchema } from '../definitions/schemas/AIRateLimitingAdvanced'
-import { applicationRegistrationSchema } from '../definitions/schemas/ApplicationRegistration'
+import { aiPromptDecoratorFormSchema } from '../definitions/schemas/AIPromptDecorator'
+import { aiPromptTemplateFormSchema } from '../definitions/schemas/AIPromptTemplate'
+import { aiRateLimitingAdvancedFormSchema } from '../definitions/schemas/AIRateLimitingAdvanced'
+import { applicationRegistrationFormSchema } from '../definitions/schemas/ApplicationRegistration'
 import { ArrayStringFieldSchema } from '../definitions/schemas/ArrayStringFieldSchema'
 import { dataDogSchema } from '../definitions/schemas/Datadog'
-import { graphqlRateLimitingAdvancedSchema } from '../definitions/schemas/GraphQLRateLimitingAdvanced'
-import { jwtSchema } from '../definitions/schemas/JWT'
-import { kafkaSchema } from '../definitions/schemas/Kafka'
+import { graphqlRateLimitingAdvancedFormSchema } from '../definitions/schemas/GraphQLRateLimitingAdvanced'
+import { jwtPluginFormSchema } from '../definitions/schemas/JWT'
+import { kafkaFormSchema } from '../definitions/schemas/Kafka'
 import { mockingSchema } from '../definitions/schemas/Mocking'
-import { preFunctionSchema } from '../definitions/schemas/PreFunction'
-import { rateLimitingSchema } from '../definitions/schemas/RateLimiting'
-import { requestTransformerAdvancedSchema } from '../definitions/schemas/RequestTransformerAdvanced'
-import RequestValidatorSchema from '../definitions/schemas/RequestValidator'
-import { routeByHeaderSchema } from '../definitions/schemas/RouteByHeader'
-import { samlSchema } from '../definitions/schemas/SAML'
+import { preFunctionFormSchema } from '../definitions/schemas/PreFunction'
+import { rateLimitingFormSchema } from '../definitions/schemas/RateLimiting'
+import { requestTransformerAdvancedFormSchema } from '../definitions/schemas/RequestTransformerAdvanced'
+import { requestValidatorFormSchema } from '../definitions/schemas/RequestValidator'
+import { routeByHeaderFormSchema } from '../definitions/schemas/RouteByHeader'
+import { samlFormSchema } from '../definitions/schemas/SAML'
 import { statsDSchema } from '../definitions/schemas/StatsD'
 import { statsDAdvancedSchema } from '../definitions/schemas/StatsDAdvanced'
-import { vaultAuthSchema } from '../definitions/schemas/VaultAuth'
-import ZipkinSchema from '../definitions/schemas/Zipkin'
+import { vaultAuthFormSchema } from '../definitions/schemas/VaultAuth'
+import { zipkinFormSchema } from '../definitions/schemas/Zipkin'
 import typedefs from '../definitions/schemas/typedefs'
 import { type CustomSchemas } from '../types'
 import useI18n from './useI18n'
@@ -82,119 +82,177 @@ export const useSchemas = (entityId?: string, options?: UseSchemasOptions) => {
 
   const customSchemas: CustomSchemas = {
     'application-registration': {
-      overwriteDefault: true,
+      mergingStrategy: 'overwrite',
       formSchema: {
-        ...applicationRegistrationSchema,
+        ...applicationRegistrationFormSchema,
       },
     },
 
     datadog: {
-      ...dataDogSchema,
+      formSchema: { ...dataDogSchema },
     },
 
     'upstream-tls': {
-      'config-trusted_certificates': {
-        type: 'textArea',
-        valueType: 'array',
-        rows: 4,
-        help: 'A comma separated list of certificate values',
+      formSchema: {
+        'config-trusted_certificates': {
+          type: 'textArea',
+          valueType: 'array',
+          rows: 4,
+          help: 'A comma separated list of certificate values',
+        },
       },
     },
 
     // KAG-3347: BE descriptions missing. Should remove when BE descriptions are available
     jwt: {
-      ...jwtSchema,
+      formSchema: {
+        ...jwtPluginFormSchema,
+      },
     },
 
     'kafka-upstream': {
-      ...kafkaSchema,
+      formSchema: {
+        ...kafkaFormSchema,
+      },
     },
 
     'kafka-log': {
-      ...kafkaSchema,
+      formSchema: {
+        ...kafkaFormSchema,
+      },
     },
 
     statsd: {
-      ...statsDSchema,
+      formSchema: {
+        ...statsDSchema,
+      },
     },
 
     'statsd-advanced': {
-      ...statsDAdvancedSchema,
+      formSchema: {
+        ...statsDAdvancedSchema,
+      },
     },
 
     'route-by-header': {
-      ...routeByHeaderSchema,
+      formSchema: {
+        ...routeByHeaderFormSchema,
+      },
     },
 
     'ai-prompt-decorator': {
-      ...aiPromptDecoratorSchema,
+      formSchema: {
+        ...aiPromptDecoratorFormSchema,
+      },
     },
 
     'ai-prompt-template': {
-      ...aiPromptTemplateSchema,
+      formSchema: {
+        ...aiPromptTemplateFormSchema,
+      },
     },
 
     'ai-rate-limiting-advanced': {
-      ...aiRateLimitingAdvancedSchema,
+      formSchema: {
+        ...aiRateLimitingAdvancedFormSchema,
+      },
     },
 
     'vault-auth': {
-      ...vaultAuthSchema,
+      formSchema: {
+        ...vaultAuthFormSchema,
+      },
     },
 
     'oas-validation': {
-      'config-api_spec': {
-        type: 'textArea',
-        rows: 15,
+      formSchema: {
+        'config-api_spec': {
+          type: 'textArea',
+          rows: 15,
+        },
       },
     },
 
     mocking: {
-      ...mockingSchema,
+      formSchema: {
+        ...mockingSchema,
+      },
     },
 
     'rate-limiting': {
-      ...rateLimitingSchema,
+      formSchema: {
+        ...rateLimitingFormSchema,
+      },
     },
 
-    'rate-limiting-advanced': options?.app === 'kongManager'
-      ? {
-        'config-consumer_groups': rateLimitingSchema['config-consumer_groups'],
-      }
-      : {
-        ...rateLimitingSchema,
+    'rate-limiting-advanced': {
+      formSchema: options?.app === 'kongManager'
+        ? {
+          'config-consumer_groups': rateLimitingFormSchema['config-consumer_groups'],
+        }
+        : {
+          ...rateLimitingFormSchema,
+        },
+    },
+
+    'graphql-proxy-cache-advanced': {
+      mergingStrategy: 'shallowMerge',
+      formSchema: {
+        'config-redis-cluster_addresses': {
+          omitWhenEmpty: true,
+        },
+        'config-redis-sentinel_addresses': {
+          omitWhenEmpty: true,
+        },
       },
+    },
 
     'graphql-rate-limiting-advanced': {
-      ...graphqlRateLimitingAdvancedSchema,
+      formSchema: {
+        ...graphqlRateLimitingAdvancedFormSchema,
+      },
     },
 
     'response-ratelimiting': {
-      ...rateLimitingSchema,
+      formSchema: {
+        ...rateLimitingFormSchema,
+      },
     },
 
     'pre-function': {
-      ...preFunctionSchema,
+      formSchema: {
+        ...preFunctionFormSchema,
+      },
     },
     // both post and pre function plugin forms need identical schema overrides, so we use PreFunction for both
     'post-function': {
-      ...preFunctionSchema,
+      formSchema: {
+        ...preFunctionFormSchema,
+      },
     },
 
     'request-transformer-advanced': {
-      ...requestTransformerAdvancedSchema,
+      formSchema: {
+        ...requestTransformerAdvancedFormSchema,
+      },
     },
 
     'request-validator': {
-      ...RequestValidatorSchema,
+      formSchema: {
+        ...requestValidatorFormSchema,
+      },
     },
 
     zipkin: {
-      ...ZipkinSchema,
+      formSchema: {
+        ...zipkinFormSchema,
+      },
     },
 
     saml: {
-      ...samlSchema,
+      formSchema: {
+        ...samlFormSchema,
+      },
     },
   }
 

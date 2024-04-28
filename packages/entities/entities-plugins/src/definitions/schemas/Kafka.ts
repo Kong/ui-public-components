@@ -1,7 +1,7 @@
-import type { KafkaSchema } from '../../types/plugins/kafka-schema'
+import type { KafkaFormSchema } from '../../types/plugins/kafka-schema'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const kafkaSchema: KafkaSchema = {
+export const kafkaFormSchema: KafkaFormSchema = {
   'config-bootstrap_servers': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Bootstrap Server',

@@ -1,6 +1,6 @@
-import type { ItemsSchema, CommonSchemaFields } from '../../types/plugins/shared'
+import type { ItemsSchema } from '../../types/plugins/shared'
 
-export interface StatsDAdvancedSchema extends CommonSchemaFields {
+export interface StatsDAdvancedFormSchema {
   'config-allow_status_codes': {
     type: string,
     inputType: string,

@@ -1,6 +1,6 @@
-import type { VaultAuthSchema } from '../../types/plugins/vault-auth'
+import type { VaultAuthFormSchema } from '../../types/plugins/vault-auth'
 
-export const vaultAuthSchema: VaultAuthSchema = {
+export const vaultAuthFormSchema: VaultAuthFormSchema = {
   'config-vault': {
     type: 'AutoSuggest',
     entity: 'vaults',

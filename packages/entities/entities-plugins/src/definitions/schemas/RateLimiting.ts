@@ -1,6 +1,6 @@
-import type { RateLimitingSchema } from '../../types/plugins/rate-limiting'
+import type { RateLimitingFormSchema } from '../../types/plugins/rate-limiting'
 
-export const rateLimitingSchema: RateLimitingSchema = {
+export const rateLimitingFormSchema: RateLimitingFormSchema = {
   'config-strategy': {
     label: 'Config.Strategy',
     type: 'select',

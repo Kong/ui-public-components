@@ -11,6 +11,10 @@ interface Field {
   inputType?: 'text' | 'number'
 }
 
+interface FieldOmitWhenEmpty {
+  omitWhenEmpty?: boolean
+}
+
 interface ArrayItem extends Field {
   itemContainerComponent: string
   fieldClasses?: string
@@ -39,8 +43,8 @@ export interface PluginBasicSchema {
   schemaEndpoint: string,
 }
 
-export interface CommonSchemaFields {
+export interface CommonSchemaFields<S extends Record<string, any> = Record<string, any>> {
   id?: string
-  overwriteDefault?: boolean
-  formSchema?: Record<string, any>
+  mergingStrategy?: 'overwrite' | 'shallowMerge'
+  formSchema?: S
 }

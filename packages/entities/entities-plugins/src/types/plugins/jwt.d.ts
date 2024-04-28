@@ -1,6 +1,6 @@
 import type { CommonSchemaFields, Field, PluginBasicSchema } from '../../types/plugins/shared'
 
-export interface JWTPluginSchema extends CommonSchemaFields{
+export interface JWTPluginFormSchema {
   'config-cookie_names': Field,
   'config-uri_param_names': Field,
 }

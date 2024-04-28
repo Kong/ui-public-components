@@ -1,6 +1,6 @@
 import { metricFieldsSchema } from './MetricFields'
 
-export default {
+export const zipkinFormSchema = {
   'config-static_tags': {
     ...metricFieldsSchema,
     items: {

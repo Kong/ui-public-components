@@ -1,9 +1,9 @@
+import type { ApplicationRegistrationFormSchema } from '../../types/plugins/application-registration-schema'
 import typedefs from './typedefs'
-import type { AppRegFormSchema } from '../../types/plugins/application-registration-schema'
 
 // Note: unlike most plugin schemas this schema is not modify the config fields,
 // but rather the defaultFormSchema set in pages/Plugins/Form.vue
-export const applicationRegistrationSchema: AppRegFormSchema = {
+export const applicationRegistrationFormSchema: ApplicationRegistrationFormSchema = {
   enabled: {
     type: 'switch',
     model: 'enabled',

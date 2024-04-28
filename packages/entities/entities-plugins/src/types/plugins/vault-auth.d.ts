@@ -1,6 +1,4 @@
-import type { CommonSchemaFields } from './shared'
-
-export interface VaultAuthSchema extends CommonSchemaFields {
+export interface VaultAuthFormSchema {
   'config-vault': {
     type: string
     entity: string

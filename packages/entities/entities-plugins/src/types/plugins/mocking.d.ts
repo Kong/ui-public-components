@@ -1,6 +1,4 @@
-import type { CommonSchemaFields } from '../../types/plugins/shared'
-
-export interface MockingSchema extends CommonSchemaFields {
+export interface MockingFormSchema {
   'config-api_specification': {
     label: string,
     placeholder: string,

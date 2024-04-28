@@ -1,7 +1,7 @@
-import type { AIPromptTemplateSchema } from '../../types/plugins/ai-prompt-template'
+import type { AIPromptTemplateFormSchema } from '../../types/plugins/ai-prompt-template'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const aiPromptTemplateSchema: AIPromptTemplateSchema = {
+export const aiPromptTemplateFormSchema: AIPromptTemplateFormSchema = {
   'config-templates': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Template',

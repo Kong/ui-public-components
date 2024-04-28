@@ -1,6 +1,6 @@
-import type { GraphQLRateLimitingAdvancedSchema } from '../../types/plugins/graphql-rate-limiting-advanced'
+import type { GraphQLRateLimitingAdvancedFormSchema } from '../../types/plugins/graphql-rate-limiting-advanced'
 
-export const graphqlRateLimitingAdvancedSchema: GraphQLRateLimitingAdvancedSchema = {
+export const graphqlRateLimitingAdvancedFormSchema: GraphQLRateLimitingAdvancedFormSchema = {
   'config-strategy': {
     label: 'Config.Strategy',
     type: 'select',

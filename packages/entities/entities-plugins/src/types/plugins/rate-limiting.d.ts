@@ -1,6 +1,6 @@
-import type { Field, CommonSchemaFields } from '../../types/plugins/shared'
+import type { Field } from '../../types/plugins/shared'
 
-export interface RateLimitingSchema extends CommonSchemaFields {
+export interface RateLimitingFormSchema {
   'config-strategy'?: Field,
   'config-consumer_groups': Field,
 }

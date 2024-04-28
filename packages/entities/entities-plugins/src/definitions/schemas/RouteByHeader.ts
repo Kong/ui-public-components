@@ -1,7 +1,7 @@
-import type { RouteByHeaderSchema } from '../../types/plugins/route-by-header'
+import type { RouteByHeaderFormSchema } from '../../types/plugins/route-by-header'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const routeByHeaderSchema: RouteByHeaderSchema = {
+export const routeByHeaderFormSchema: RouteByHeaderFormSchema = {
   'config-rules': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Rule',

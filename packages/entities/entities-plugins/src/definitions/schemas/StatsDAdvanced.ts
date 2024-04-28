@@ -1,7 +1,7 @@
+import type { StatsDAdvancedFormSchema } from '../../types/plugins/stats-d-advanced'
 import { metricFieldsSchema } from './MetricFields'
-import type { StatsDAdvancedSchema } from '../../types/plugins/stats-d-advanced'
 
-export const statsDAdvancedSchema: StatsDAdvancedSchema = {
+export const statsDAdvancedSchema: StatsDAdvancedFormSchema = {
   'config-allow_status_codes': {
     type: 'input',
     inputType: 'text',

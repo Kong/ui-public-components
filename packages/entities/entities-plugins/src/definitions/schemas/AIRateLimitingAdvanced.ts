@@ -1,7 +1,7 @@
-import type { AIRateLimitingAdvancedSchema } from '../../types/plugins/ai-rate-limiting-advanced'
+import type { AIRateLimitingAdvancedFormSchema } from '../../types/plugins/ai-rate-limiting-advanced'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const aiRateLimitingAdvancedSchema: AIRateLimitingAdvancedSchema = {
+export const aiRateLimitingAdvancedFormSchema: AIRateLimitingAdvancedFormSchema = {
   'config-llm_providers': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Provider',

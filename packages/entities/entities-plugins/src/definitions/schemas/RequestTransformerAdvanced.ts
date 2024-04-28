@@ -1,7 +1,7 @@
+import type { RequestTransformerAdvancedFormSchema } from '../../types/plugins/request-transformer-advanced'
 import typedefs from './typedefs'
-import type { RequestTransformerAdvancedSchema } from '../../types/plugins/request-transformer-advaced'
 
-const initRequestTransformerAdvancedSchema: RequestTransformerAdvancedSchema = {
+const initRequestTransformerAdvancedFormSchema: RequestTransformerAdvancedFormSchema = {
   'config-remove-headers': {},
   'config-remove.querystring': {},
   'config-remove-body': {},
@@ -20,7 +20,7 @@ const initRequestTransformerAdvancedSchema: RequestTransformerAdvancedSchema = {
   'config-allow-body': {},
 }
 
-export const requestTransformerAdvancedSchema: RequestTransformerAdvancedSchema = [
+export const requestTransformerAdvancedFormSchema: RequestTransformerAdvancedFormSchema = [
   'config-remove-headers',
   'config-remove.querystring',
   'config-remove-body',
@@ -42,4 +42,4 @@ export const requestTransformerAdvancedSchema: RequestTransformerAdvancedSchema 
   [v]: typedefs.fields.arrayItems({
     newElementButtonLabel: 'Add',
   }),
-}), initRequestTransformerAdvancedSchema)
+}), initRequestTransformerAdvancedFormSchema)

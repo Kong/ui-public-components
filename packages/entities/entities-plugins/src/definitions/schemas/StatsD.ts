@@ -1,7 +1,7 @@
+import type { StatsDFormSchema } from '../../types/plugins/stats-d'
 import { metricFieldsSchema } from './MetricFields'
-import type { StatsDSchema } from '../../types/plugins/stats-d'
 
-export const statsDSchema: StatsDSchema = {
+export const statsDSchema: StatsDFormSchema = {
   'config-metrics': {
     ...metricFieldsSchema,
     items: {

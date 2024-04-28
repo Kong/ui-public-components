@@ -1,24 +1,27 @@
+import type { KongManagerBaseFormConfig, KonnectBaseFormConfig } from '@kong-ui-public/entities-shared'
 import type { RouteLocationRaw } from 'vue-router'
-import type { KonnectBaseFormConfig, KongManagerBaseFormConfig } from '@kong-ui-public/entities-shared'
 import type { EntityType } from './plugin'
+import type { AIPromptDecoratorFormSchema } from './plugins/ai-prompt-decorator'
+import type { AIPromptTemplateFormSchema } from './plugins/ai-prompt-template'
+
+import type { AIRateLimitingAdvancedFormSchema } from './plugins/ai-rate-limiting-advanced'
+import type { DatadogFormSchema } from './plugins/datadog-schema'
+import type { GraphQLProxyCacheAdvancedFormSchema } from './plugins/graphql-proxy-cache-advanced'
+import type { GraphQLRateLimitingAdvancedFormSchema } from './plugins/graphql-rate-limiting-advanced'
+import type { JWTPluginFormSchema } from './plugins/jwt'
+import type { KafkaFormSchema } from './plugins/kafka-schema'
+import type { MockingFormSchema } from './plugins/mocking'
+import type { OASValidationFormSchema } from './plugins/oas-validation'
+import type { RateLimitingFormSchema } from './plugins/rate-limiting'
+import type { RequestTransformerAdvancedFormSchema } from './plugins/request-transformer-advanced'
+import type { RouteByHeaderFormSchema } from './plugins/route-by-header'
+import type { SAMLFormSchema } from './plugins/saml'
 import type { CommonSchemaFields } from './plugins/shared'
-import type { ApplicationRegistrationSchema } from './plugins/application-registration-schema'
-import type { StatsDSchema } from './plugins/stats-d'
-import type { MockingSchema } from './plugins/mocking'
-import type { DatadogSchema } from './plugins/datadog-schema'
-import type { StatsDAdvancedSchema } from './plugins/stats-d-advanced'
-import type { JWTPluginSchema } from './plugins/jwt'
-import type { KafkaSchema } from './plugins/kafka-schema'
-import type { UpstreamTlsSchema } from './plugins/upstream-tls'
-import type { RateLimitingSchema } from './plugins/rate-limiting'
-import type { RouteByHeaderSchema } from './plugins/route-by-header'
-import type { AIPromptDecoratorSchema } from './plugins/ai-prompt-decorator'
-import type { AIPromptTemplateSchema } from './plugins/ai-prompt-template'
-import type { AIRateLimitingAdvancedSchema } from './plugins/ai-rate-limiting-advanced'
-import type { VaultAuthSchema } from './plugins/vault-auth'
-import type { GraphQLRateLimitingAdvancedSchema } from './plugins/graphql-rate-limiting-advanced'
-import type { SAMLSchema } from './plugins/saml'
-import type { OasValidationSchema } from './plugins/oas-validation'
+import type { StatsDFormSchema } from './plugins/stats-d'
+import type { StatsDAdvancedFormSchema } from './plugins/stats-d-advanced'
+import type { UpstreamTLSFormSchema } from './plugins/upstream-tls'
+import type { VaultAuthFormSchema } from './plugins/vault-auth'
+import type { PreFunctionFormSchema } from './plugins/pre-function'
 
 export interface BasePluginSelectConfig {
   /** A function that returns the route for creating a plugin */
@@ -191,30 +194,31 @@ interface ArrayItem {
 
 export type ReturnArrayItem = ArrayItem & Item
 
-export interface CustomSchemas {
-  'application-registration': ApplicationRegistrationSchema
-  datadog: DatadogSchema
-  'upstream-tls': UpstreamTlsSchema
-  jwt: JWTPluginSchema
-  'kafka-upstream': KafkaSchema
-  'kafka-log': KafkaSchema
-  statsd: StatsDSchema
-  'statsd-advanced': StatsDAdvancedSchema
-  mocking: MockingSchema
-  'rate-limiting': RateLimitingSchema
-  'rate-limiting-advanced': RateLimitingSchema
-  'route-by-header': RouteByHeaderSchema
-  'ai-prompt-decorator': AIPromptDecoratorSchema
-  'ai-prompt-template': AIPromptTemplateSchema
-  'ai-rate-limiting-advanced': AIRateLimitingAdvancedSchema
-  'vault-auth': VaultAuthSchema
-  'graphql-rate-limiting-advanced': GraphQLRateLimitingAdvancedSchema
-  'response-ratelimiting': RateLimitingSchema
-  'pre-function': CommonSchemaFields & Record<string, any>
-  'post-function': CommonSchemaFields & Record<string, any>
-  'request-transformer-advanced': CommonSchemaFields & Record<string, any>
-  'request-validator': CommonSchemaFields & Record<string, any>
-  zipkin: CommonSchemaFields & Record<string, any>
-  saml: SAMLSchema
-  'oas-validation': OasValidationSchema
+export interface CustomSchemas extends Record<string, CommonSchemaFields> {
+  'application-registration': CommonSchemaFields<AppRegFormSchema>
+  datadog: CommonSchemaFields<DatadogFormSchema>
+  'upstream-tls': CommonSchemaFields<UpstreamTLSFormSchema>
+  jwt: CommonSchemaFields<JWTPluginFormSchema>
+  'kafka-upstream': CommonSchemaFields<KafkaFormSchema>
+  'kafka-log': CommonSchemaFields<KafkaFormSchema>
+  statsd: CommonSchemaFields<StatsDFormSchema>
+  'statsd-advanced': CommonSchemaFields<StatsDAdvancedFormSchema>
+  mocking: CommonSchemaFields<MockingFormSchema>
+  'rate-limiting': CommonSchemaFields<RateLimitingFormSchema>
+  'rate-limiting-advanced': CommonSchemaFields<RateLimitingFormSchema>
+  'route-by-header': CommonSchemaFields<RouteByHeaderFormSchema>
+  'ai-prompt-decorator': CommonSchemaFields<AIPromptDecoratorFormSchema>
+  'ai-prompt-template':CommonSchemaFields< AIPromptTemplateFormSchema>
+  'ai-rate-limiting-advanced': CommonSchemaFields<AIRateLimitingAdvancedFormSchema>
+  'vault-auth': CommonSchemaFields<VaultAuthFormSchema>
+  'graphql-proxy-cache-advanced': CommonSchemaFields<GraphQLProxyCacheAdvancedFormSchema>
+  'graphql-rate-limiting-advanced': CommonSchemaFields<GraphQLRateLimitingAdvancedFormSchema>
+  'response-ratelimiting': CommonSchemaFields<RateLimitingFormSchema>
+  'pre-function': CommonSchemaFields<PreFunctionFormSchema>
+  'post-function': CommonSchemaFields<PreFunctionFormSchema>
+  'request-transformer-advanced': CommonSchemaFields<RequestTransformerAdvancedFormSchema>
+  'request-validator': CommonSchemaFields
+  zipkin: CommonSchemaFields
+  saml: CommonSchemaFields<SAMLFormSchema>
+  'oas-validation': CommonSchemaFields<OASValidationFormSchema>
 }

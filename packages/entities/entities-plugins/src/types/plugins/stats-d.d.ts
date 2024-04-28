@@ -1,6 +1,6 @@
-import type { Field, CommonSchemaFields } from '../../types/plugins/shared'
+import type { Field } from '../../types/plugins/shared'
 
-export interface StatsDSchema extends CommonSchemaFields {
+export interface StatsDFormSchema {
   'config-metrics': {
     type: string
     showRemoveButton: boolean

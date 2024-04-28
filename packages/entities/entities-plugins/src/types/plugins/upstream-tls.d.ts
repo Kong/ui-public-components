@@ -1,6 +1,4 @@
-import type { CommonSchemaFields } from '../../types/plugins/shared'
-
-export interface UpstreamTlsSchema extends CommonSchemaFields {
+export interface UpstreamTLSFormSchema{
   'config-trusted_certificates': {
     type: string
     valueType: string

@@ -1,7 +1,7 @@
+import type { PreFunctionFormSchema } from '../../types/plugins/pre-function'
 import typedefs from './typedefs'
-import type { PreFunctionSchema } from '../../types/plugins/pre-function'
 
-const initPreFunctionSchema: PreFunctionSchema = {
+const initPreFunctionFormSchema: PreFunctionFormSchema = {
   'config-access': {},
   'config-body_filter': {},
   'config-header_filter': {},
@@ -11,7 +11,7 @@ const initPreFunctionSchema: PreFunctionSchema = {
   'config-rewrite': {},
 }
 
-export const preFunctionSchema: PreFunctionSchema = [
+export const preFunctionFormSchema: PreFunctionFormSchema = [
   'config-access',
   'config-body_filter',
   'config-header_filter',
@@ -24,4 +24,4 @@ export const preFunctionSchema: PreFunctionSchema = [
   [v]: typedefs.fields.arrayItems({
     newElementButtonLabel: 'Add',
   }),
-}), initPreFunctionSchema)
+}), initPreFunctionFormSchema)

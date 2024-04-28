@@ -1,6 +1,4 @@
-import type { CommonSchemaFields } from './shared'
-
-export interface OasValidationSchema extends CommonSchemaFields {
+export interface OASValidationFormSchema {
   'config-api_spec': {
     type: string
     rows: number

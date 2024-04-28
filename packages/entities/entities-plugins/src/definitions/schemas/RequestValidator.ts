@@ -1,6 +1,6 @@
 import { metricFieldsSchema } from './MetricFields'
 
-export default {
+export const requestValidatorFormSchema = {
   'config-parameter_schema': {
     ...metricFieldsSchema,
     items: {

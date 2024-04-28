@@ -1,7 +1,6 @@
 import type { ReturnArrayItem } from '../../types/plugins/typedefs'
-import type { CommonSchemaFields } from '../../types/plugins/shared'
 
-export interface PreFunctionSchema extends CommonSchemaFields {
+export interface PreFunctionFormSchema {
   'config-access': ReturnArrayItem | {},
   'config-body_filter': ReturnArrayItem | {},
   'config-header_filter': ReturnArrayItem | {},

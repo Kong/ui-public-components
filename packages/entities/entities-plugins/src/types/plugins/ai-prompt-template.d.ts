@@ -1,4 +1,4 @@
-import type { Field, ItemsSchema, CommonSchemaFields } from './shared'
+import type { Field, ItemsSchema } from './shared'
 
 type ItemsSchemaForKeyValuePairs = Omit<ItemsSchema, 'schema'> & {
   schema: {
@@ -6,7 +6,7 @@ type ItemsSchemaForKeyValuePairs = Omit<ItemsSchema, 'schema'> & {
   }
 }
 
-export interface AIPromptTemplateSchema extends CommonSchemaFields {
+export interface AIPromptTemplateFormSchema {
   'config-templates': {
     type: string
     showRemoveButton: boolean

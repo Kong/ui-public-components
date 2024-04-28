@@ -1,7 +1,7 @@
+import type { DatadogFormSchema } from '../../types/plugins/datadog-schema'
 import { metricFieldsSchema } from './MetricFields'
-import type { DatadogSchema } from '../../types/plugins/datadog-schema'
 
-export const dataDogSchema: DatadogSchema = {
+export const dataDogSchema: DatadogFormSchema = {
   'config-metrics': {
     ...metricFieldsSchema,
     items: {

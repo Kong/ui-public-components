@@ -1,6 +1,6 @@
-import type { ItemsSchema, CommonSchemaFields } from '../../types/plugins/shared'
+import type { ItemsSchema } from '../../types/plugins/shared'
 
-export interface SAMLSchema extends CommonSchemaFields {
+export interface SAMLFormSchema {
   'config-session_redis_cluster_nodes': {
     type: string
     showRemoveButton: boolean

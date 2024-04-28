@@ -1,4 +1,4 @@
-import type { Field, ItemsSchema, CommonSchemaFields } from '../../types/plugins/shared'
+import type { Field, ItemsSchema } from '../../types/plugins/shared'
 
 type FieldForKeyValuePairs = Field & {
   newElementButtonLabelClasses?: string
@@ -13,7 +13,7 @@ type ItemsSchemaForKeyValuePairs = Omit<ItemsSchema, 'schema'> & {
   }
 }
 
-export interface RouteByHeaderSchema extends CommonSchemaFields {
+export interface RouteByHeaderFormSchema {
   'config-rules': {
     type: string
     showRemoveButton: boolean

@@ -1,7 +1,7 @@
-import type { SAMLSchema } from '../../types/plugins/saml'
+import type { SAMLFormSchema } from '../../types/plugins/saml'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const samlSchema: SAMLSchema = {
+export const samlFormSchema: SAMLFormSchema = {
   'config-session_redis_cluster_nodes': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Cluster Node',

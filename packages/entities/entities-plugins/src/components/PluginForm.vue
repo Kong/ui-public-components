@@ -145,11 +145,12 @@ import {
 import '@kong-ui-public/entities-shared/dist/style.css'
 import type { Tab } from '@kong/kongponents'
 import type { AxiosError, AxiosResponse } from 'axios'
+import { cloneDeep as loCloneDeep, get as loGet, has as loHas, set as loSet, unset as loUnset, isEmpty } from 'lodash-es'
 import { marked, type MarkedOptions } from 'marked'
-import { CREDENTIAL_METADATA, CREDENTIAL_SCHEMAS, PLUGIN_METADATA } from '../definitions/metadata'
 import { computed, onBeforeMount, reactive, ref, watch, type PropType } from 'vue'
 import { useRouter } from 'vue-router'
 import composables from '../composables'
+import { CREDENTIAL_METADATA, CREDENTIAL_SCHEMAS, PLUGIN_METADATA } from '../definitions/metadata'
 import { ArrayStringFieldSchema } from '../definitions/schemas/ArrayStringFieldSchema'
 import endpoints from '../plugins-endpoints'
 import {
@@ -163,6 +164,7 @@ import {
   type PluginFormFields,
   type PluginFormState,
 } from '../types'
+import type { CommonSchemaFields } from '../types/plugins/shared'
 import PluginEntityForm from './PluginEntityForm.vue'
 
 const emit = defineEmits<{
@@ -463,7 +465,7 @@ const getArrayType = (list: unknown[]): string => {
 
 const buildFormSchema = (parentKey: string, response: Record<string, any>, initialFormSchema: Record<string, any>) => {
   let schema = (response && response.fields) || []
-  const pluginSchema = customSchemas[props.pluginType as keyof typeof customSchemas]
+  const customSchema: CommonSchemaFields | undefined = customSchemas[props.pluginType]
   const credentialSchema = CREDENTIAL_METADATA[props.pluginType]?.schema?.fields
 
   // schema can either be an object or an array of objects. If it's an array, convert it to an object
@@ -606,21 +608,29 @@ const buildFormSchema = (parentKey: string, response: Record<string, any>, initi
       initialFormSchema[field].hint = scheme.hint
     }
 
+    const mergingStrategy = customSchema?.mergingStrategy
+    const customFormSchema = customSchema?.formSchema
     // Custom frontend schema override
-    if (pluginSchema && !pluginSchema.overwriteDefault) {
-      Object.keys(pluginSchema).forEach(plugin => {
+    if (mergingStrategy !== 'overwrite' && customFormSchema !== undefined) {
+      for (const [customFieldName, customField] of Object.entries(customFormSchema)) {
         // Check if current plugin matches any of custom schema keys
-        if (plugin === field) {
-          // Use custom defined schema instead of building from default && set field label
-          const { help, label, hint } = initialFormSchema[field]
-          const { help: helpOverride, ...overrides } = pluginSchema[plugin as keyof typeof pluginSchema] as Record<string, any>
-          initialFormSchema[field] = { help, label, hint, ...overrides }
+        if (customFieldName === field) {
+          const { help: helpOverride, ...overrides } = customField
+
+          if (mergingStrategy === 'shallowMerge') {
+            initialFormSchema[field] = { ...initialFormSchema[field], ...overrides }
+          } else {
+            // Use custom defined schema instead of building from default && set field label
+            const { help, label, hint } = initialFormSchema[field]
+            initialFormSchema[field] = { help, label, hint, ...overrides }
+          }
+
           // Eagerly replace the help text because we are overriding
           if (typeof helpOverride === 'string') {
             initialFormSchema[field].help = marked.parse(helpOverride, { mangle: false, headerIds: false } as MarkedOptions)
           }
         }
-      })
+      }
     }
 
     // Apply descriptions from BE schema
@@ -866,11 +876,9 @@ const initScopeFields = (): void => {
     defaultFormSchema.selectionGroup.fields[1].fields = scopeEntityArray
   }
 
-  // apply custom front-end schema if overwriteDefault is true
-  if (customSchemas[props.pluginType as keyof typeof customSchemas] && customSchemas[props.pluginType as keyof typeof customSchemas].overwriteDefault) {
-    if (Object.hasOwnProperty.call(customSchemas[props.pluginType as keyof typeof customSchemas], 'formSchema')) {
-      Object.assign(defaultFormSchema, customSchemas[props.pluginType as keyof typeof customSchemas].formSchema)
-    }
+  // apply custom front-end schema if mergingStrategy is 'overwrite'
+  if (customSchemas[props.pluginType]?.mergingStrategy === 'overwrite') {
+    Object.assign(defaultFormSchema, customSchemas[props.pluginType]?.formSchema)
   }
 }
 
@@ -1003,8 +1011,51 @@ const isCustomPlugin = computed((): boolean => {
   return !Object.keys(PLUGIN_METADATA).includes(props.pluginType)
 })
 
+const shouldConsiderEmpty = (value: any): boolean => {
+  if (value === null || value === undefined) {
+    return true
+  }
+  if (typeof value === 'string') {
+    return value.trim() === ''
+  }
+  if (Array.isArray(value)) {
+    return value.filter((v) => !shouldConsiderEmpty(v)).length === 0
+  }
+  if (typeof value === 'object') {
+    return Object.entries(value)
+      .filter(([k, v]) => !(shouldConsiderEmpty(k) || shouldConsiderEmpty(v))).length === 0
+  }
+  return false
+}
+
 const getRequestBody = computed((): Record<string, any> => {
-  const requestBody: Record<string, any> = submitPayload.value
+  const requestBody: Record<string, any> = loCloneDeep(submitPayload.value)
+
+  if (schema.value !== null) {
+    for (const [schemaField, field] of Object.entries(schema.value)) {
+      const keyPath = schemaField.replace(/-/g, '.')
+      if (field?.omitWhenEmpty && loHas(requestBody, keyPath)) {
+        const value = loGet(requestBody, keyPath)
+        if (value === null || value === undefined) {
+          loUnset(requestBody, keyPath)
+          continue
+        }
+        // Remove empty strings
+        if (typeof value === 'string' && value.trim().length === 0) {
+          loUnset(requestBody, keyPath)
+          continue
+        }
+        // Objects, arrays, etc.
+        if (typeof value === 'object' && isEmpty(value)) {
+          loUnset(requestBody, keyPath)
+          continue
+        }
+        // Keep numbers, booleans, etc.
+        continue
+      }
+    }
+  }
+
   // credentials incorrectly build the entity id object
   if (treatAsCredential.value) {
     for (const key in PluginScope) {

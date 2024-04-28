@@ -1,7 +1,7 @@
-import type { AIPromptDecoratorSchema } from '../../types/plugins/ai-prompt-decorator'
+import type { AIPromptDecoratorFormSchema } from '../../types/plugins/ai-prompt-decorator'
 import { arrayCardContainerFieldSchema } from './ArrayCardContainerFields'
 
-export const aiPromptDecoratorSchema: AIPromptDecoratorSchema = {
+export const aiPromptDecoratorFormSchema: AIPromptDecoratorFormSchema = {
   'config-prompts-prepend': {
     ...arrayCardContainerFieldSchema,
     newElementButtonLabel: '+ Add Message',

@@ -1,7 +1,7 @@
-import type { JwtSecretFieldSchema, JWTPluginSchema } from '../../types/plugins/jwt'
+import type { JwtSecretFieldSchema, JWTPluginFormSchema } from '../../types/plugins/jwt'
 
 // KAG-3347: BE descriptions missing. Should remove when BE descriptions are available
-export const jwtSchema: JWTPluginSchema = {
+export const jwtPluginFormSchema: JWTPluginFormSchema = {
   'config-cookie_names': {
     label: 'config.cookie_names',
     type: 'set',

@@ -1,7 +1,6 @@
-import type { ReturnArrayItem } from '../../types/plugins/typedefs'
-import type { CommonSchemaFields } from '../../types/plugins/shared'
+import type { ReturnArrayItem } from './typedefs'
 
-export interface RequestTransformerAdvancedSchema extends CommonSchemaFields {
+export interface RequestTransformerAdvancedFormSchema {
   'config-remove-headers': ReturnArrayItem | {},
   'config-remove.querystring': ReturnArrayItem | {},
   'config-remove-body': ReturnArrayItem | {},
