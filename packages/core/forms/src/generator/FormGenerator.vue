@@ -138,12 +138,12 @@
 
 <script>
 /**
- * @typedef {import('./types').FGCollapsibleOptions} FGCollapsibleOptions
- * @typedef {import('./types').FGSlots} FGSlots
+ * @typedef {import('./types').FieldGroupCollapsibleOptions} FieldGroupCollapsibleOptions
+ * @typedef {import('./types').FieldGroupSlots} FieldGroupSlots
  *
  * @typedef PartialGroup
- * @prop {FGCollapsibleOptions=} collapsible
- * @prop {FGSlots=} slots
+ * @prop {FieldGroupCollapsibleOptions=} collapsible
+ * @prop {FieldGroupSlots=} slots
  *
  * @typedef {Record<string, any> & PartialGroup} Group
  */
@@ -306,8 +306,8 @@ export default {
       this.$emit('validated', isValid, this.errors, this)
     },
 
-    onModelUpdated(newVal, schema) {
-      this.$emit('modelUpdated', newVal, schema)
+    onModelUpdated(value, modelKey) {
+      this.$emit('modelUpdated', value, modelKey)
     },
 
     // Validating the model properties

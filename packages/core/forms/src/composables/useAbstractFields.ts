@@ -1,4 +1,3 @@
-import { computed, ref, type Ref } from 'vue'
 import type { DebouncedFunc } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import forEach from 'lodash-es/forEach'
@@ -7,17 +6,19 @@ import isFunction from 'lodash-es/isFunction'
 import isString from 'lodash-es/isString'
 import arrayUniq from 'lodash-es/uniq'
 import uniqueId from 'lodash-es/uniqueId'
-import validators from '../generator/utils/validators'
+import { computed, ref, type Ref } from 'vue'
+import type { FieldSchema } from '../generator/types'
 import { slugifyFormID } from '../generator/utils/schema'
+import validators from '../generator/utils/validators'
 
 interface AbstractFieldParams {
   model?: Ref<Record<string, any> | undefined>,
-  schema: Record<string, any>,
+  schema: FieldSchema,
   formOptions?: Record<string, any>,
   disabled?: boolean,
   emitModelUpdated?: (data: {
     value: any
-    model: Record<string, any>
+    modelKey: string
   }) => void,
   emitValidated?: (data: {
     isValid: any
@@ -26,7 +27,7 @@ interface AbstractFieldParams {
   }) => void
 }
 
-export default function useAbstractFields(formData: AbstractFieldParams) {
+export default function useAbstractFields<M = any>(formData: AbstractFieldParams) {
   const errors = ref<string[]>([])
   const debouncedValidateFunc = ref<DebouncedFunc<(calledParent?: any) => any[]> | null>(null)
 
@@ -53,7 +54,7 @@ export default function useAbstractFields(formData: AbstractFieldParams) {
    * The value of the field with getter/setter defined.
    * Handles formatting to/from the model (used in PUT/POST) and field (actual input element) formatted values
    */
-  const value = computed({
+  const value = computed<M>({
     get() {
       let val
 
@@ -66,7 +67,7 @@ export default function useAbstractFields(formData: AbstractFieldParams) {
       return formatValueToField(val)
     },
     set(newValue): void {
-      const oldValue = value
+      const oldValue = value.value
       newValue = formatValueToModel(newValue)
 
       if (isFunction(newValue)) {
@@ -174,20 +175,22 @@ export default function useAbstractFields(formData: AbstractFieldParams) {
   /**
    * This is called every time the value of an input is changed and should handle validation/emitting modelUpdated events.
    */
-  const updateModelValue = (newValue: any, oldValue: any) => {
+  const updateModelValue = (newValue: M, oldValue: M) => {
     let changed = false
 
     if (isFunction(formData.schema.set)) {
-      formData.schema.set(formData.model?.value, newValue)
+      formData.schema.set(formData.model?.value!, newValue)
       changed = true
     } else if (formData.schema.model) {
       setModelValueByPath(formData.schema.model, newValue)
+      changed = true
+    } else if (formData.schema.multipleModelFields) {
       changed = true
     }
 
     if (changed) {
       if (formData.emitModelUpdated && formData.model?.value) {
-        formData.emitModelUpdated({ value: newValue, model: formData.schema.model })
+        formData.emitModelUpdated({ value: newValue, modelKey: formData.schema.model! })
       }
 
       if (isFunction(formData.schema.onChanged)) {

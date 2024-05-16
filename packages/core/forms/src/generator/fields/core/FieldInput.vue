@@ -26,14 +26,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onBeforeMount, onMounted, toRefs, type PropType } from 'vue'
-import type { DebouncedFunc } from 'lodash-es'
 import fecha from 'fecha'
+import type { DebouncedFunc } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import objGet from 'lodash-es/get'
 import isFunction from 'lodash-es/isFunction'
 import isNumber from 'lodash-es/isNumber'
+import { computed, onBeforeMount, onMounted, ref, toRefs, type PropType } from 'vue'
 import composables from '../../../composables'
+import type { FieldSchema } from '../../types'
 
 const props = defineProps({
   disabled: {
@@ -49,7 +50,7 @@ const props = defineProps({
     default: () => undefined,
   },
   schema: {
-    type: Object as PropType<Record<string, any>>,
+    type: Object as PropType<FieldSchema>,
     required: true,
   },
   vfg: {
@@ -71,7 +72,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (event: 'modelUpdated', value: any, model: Record<string, any>): void
+  (event: 'modelUpdated', value: any, keyPath: string): void
 }>()
 
 const propsRefs = toRefs(props)
@@ -80,8 +81,8 @@ const { updateModelValue, getFieldID, clearValidationErrors, value: inputValue }
   model: propsRefs.model,
   schema: props.schema,
   formOptions: props.formOptions,
-  emitModelUpdated: (data: { value: any, model: Record<string, any> }): void => {
-    emit('modelUpdated', data.value, data.model)
+  emitModelUpdated: (data): void => {
+    emit('modelUpdated', data.value, data.modelKey)
   },
 })
 
@@ -90,7 +91,7 @@ defineExpose({
 })
 
 const inputType = computed((): string => {
-  const iType = props.schema?.inputType.toLowerCase()
+  const iType = props.schema?.inputType?.toLowerCase()
 
   // 'string' maps to 'text' input type
   // 'datetime' maps to 'datetime-local'

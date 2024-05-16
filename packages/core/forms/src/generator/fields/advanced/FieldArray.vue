@@ -1,56 +1,68 @@
 <template>
-  <div
+  <component
+    :is="schema.wrapper || 'div'"
     v-if="schema"
     :id="getFieldID(schema)"
     :class="schema.fieldClasses"
+    v-bind="schema.wrapperProps"
   >
     <div
       v-for="(item, index) in value"
-      :key="index"
+      :key="`${keyPrefix}-${index}`"
       :class="schema.fieldItemsClasses"
     >
       <component
         :is="schema.itemContainerComponent"
         v-if="schema.items && schema.itemContainerComponent"
+        :array-info="{ index, size: value.length }"
+        :form-model="model"
         :model="item"
         :schema="generateSchema(value, schema.items, index)"
-        @remove-item="removeElement(index)"
+        @add-item="() => addItem(index)"
+        @remove-item="() => removeItem(index)"
       >
         <component
           :is="getFieldType(schema.items)"
+          :array-info="{ index, size: value.length }"
+          :array-size="value.length"
+          :form-model="model"
           :form-options="formOptions"
           :model="item"
           :schema="generateSchema(value, schema.items, index)"
-          @model-updated="modelUpdated"
         />
       </component>
-      <span v-else-if="schema.items">
-        <component
-          :is="getFieldType(schema.items)"
-          :form-options="formOptions"
-          :model="item"
-          :schema="generateSchema(value, schema.items, index)"
-          @model-updated="modelUpdated"
-        />
-      </span>
+      <component
+        :is="getFieldType(schema.items)"
+        v-else-if="schema.items"
+        :array-info="{ index, size: value.length }"
+        :array-size="value.length"
+        :form-model="model"
+        :form-options="formOptions"
+        :model="item"
+        :schema="generateSchema(value, schema.items, index)"
+        @add-item="() => addItem(index)"
+        @remove-item="() => removeItem(index)"
+      />
       <component
         :is="schema.itemContainerComponent"
         v-else-if="schema.itemContainerComponent"
+        :array-info="{ index, size: value.length }"
+        :array-size="value.length"
         :data-testid="`${getFieldID(schema)}-item-${index}`"
+        :form-model="model"
         :model="item"
         :schema="generateSchema(value, schema.items, index)"
-        @remove-item="removeElement(index)"
+        @add-item="() => addItem(index)"
+        @remove-item="() => removeItem(index)"
       >
         <FieldTextArea
-          v-if=" schema.inputAttributes?.type === 'textarea'"
+          v-if="schema.inputAttributes?.type === 'textarea'"
           :aria-labelledby="getLabelId(schema)"
           class="k-input"
           :form-options="formOptions"
           :model="item"
           :schema="generateSchema(value, schema.items, index)"
-          @model-updated="modelUpdated"
         />
-
         <input
           v-else
           v-model="value[index]"
@@ -63,7 +75,7 @@
           v-bind="schema.removeElementButtonAttributes"
           type="button"
           :value="schema.removeElementButtonLabel || removeElementButtonLabel"
-          @click="removeElement(index)"
+          @click="() => removeItem(index)"
         >
       </component>
       <input
@@ -78,49 +90,62 @@
         v-bind="schema.removeElementButtonAttributes"
         type="button"
         :value="schema.removeElementButtonLabel || removeElementButtonLabel"
-        @click="removeElement(index)"
+        @click="() => removeItem(index)"
       >
     </div>
     <KButton
+      v-if="!schema.hideAddItemButton"
       appearance="tertiary"
       :class="schema.newElementButtonLabelClasses"
       :data-testid="`add-${getFieldID(schema)}`"
       type="button"
-      @click="newElement"
+      @click="addItem"
     >
       {{ schema.newElementButtonLabel || newElementButtonLabel }}
     </KButton>
-  </div>
+  </component>
 </template>
 
 <script>
+/**
+ * @typedef {import('../types/array').ArrayFieldAddItemFunc} ArrayFieldAddItemFunc
+ * @typedef {import('../types/array').ArrayFieldUpdateItemFunc} ArrayFieldUpdateItemFunc
+ * @typedef {import('../types/array').ArrayFieldRemoveItemFunc} ArrayFieldRemoveItemFunc
+ */
+
+import { TrashIcon } from '@kong/icons'
+import cloneDeep from 'lodash-es/cloneDeep'
+import objGet from 'lodash-es/get'
 import abstractField from '../abstractField'
-import FieldArrayItem from './FieldArrayItem.vue'
-import FieldArrayMultiItem from './FieldArrayMultiItem.vue'
-import FieldMetric from './FieldMetric.vue'
-import FieldObject from './FieldObject.vue'
-import FieldObjectAdvanced from './FieldObjectAdvanced.vue'
-import FieldAutoSuggest from './FieldAutoSuggest.vue'
-import FieldArrayCardContainer from './FieldArrayCardContainer.vue'
-import FieldRadio from './FieldRadio.vue'
 import FieldInput from '../core/FieldInput.vue'
 import FieldSelect from '../core/fieldSelect.vue'
 import FieldTextArea from '../core/fieldTextArea.vue'
+import FieldArrayCardContainer from './FieldArrayCardContainer.vue'
+import FieldArrayItem from './FieldArrayItem.vue'
+import FieldAutoSuggest from './FieldAutoSuggest.vue'
+import FieldCardContainer from './FieldCardContainer.vue'
+import FieldMetric from './FieldMetric.vue'
+import FieldObject from './FieldObject.vue'
+import FieldObjectAdvanced from './FieldObjectAdvanced.vue'
+import FieldPair from './FieldPair.vue'
+import FieldRadio from './FieldRadio.vue'
 
 export default {
   name: 'FieldArray',
   components: {
+    FieldArrayCardContainer,
     FieldArrayItem,
-    FieldArrayMultiItem,
-    FieldSelect,
+    FieldAutoSuggest,
+    FieldCardContainer,
+    FieldPair,
+    FieldInput,
     FieldMetric,
     FieldObject,
     FieldObjectAdvanced,
-    FieldAutoSuggest,
     FieldRadio,
-    FieldArrayCardContainer,
+    FieldSelect,
     FieldTextArea,
-    FieldInput,
+    TrashIcon,
   },
   mixins: [abstractField],
   props: {
@@ -133,15 +158,24 @@ export default {
       default: 'x',
     },
   },
+  data() {
+    return {
+      keyPrefix: Math.random().toString(36).substring(2),
+    }
+  },
   methods: {
+    invalidateKeyPrefix() {
+      this.keyPrefix = Math.random().toString(36).substring(2)
+    },
+
     generateSchema(rootValue, schema, index) {
       // Instead of using schema directly, we make a copy to avoid schema object mutation side effects
 
       let copy
       if (schema) {
-        copy = JSON.parse(JSON.stringify(schema))
+        copy = cloneDeep(schema)
 
-        copy.schema?.fields?.map?.(field => {
+        copy.schema?.fields?.map?.((field) => {
           field.id = `${field.id || field.model}-${index}`
           return field
         })
@@ -158,7 +192,19 @@ export default {
       }
     },
 
-    newElement() {
+    /**
+     *
+     * @param {number} index Optional. If provided, the new item will be inserted after the index.
+     */
+    addItem(index) {
+      /** @type {ArrayFieldAddItemFunc} */
+      const schemaAddItem = objGet(this.schema, 'itemFuncs.add')
+      if (typeof schemaAddItem === 'function') {
+        schemaAddItem(this.model, index)
+        this.invalidateKeyPrefix()
+        return
+      }
+
       let value = this.value
       let itemsDefaultValue
 
@@ -175,14 +221,34 @@ export default {
       value.push(itemsDefaultValue)
 
       this.value = [...value]
+
+      this.invalidateKeyPrefix()
     },
-    removeElement(index) {
+
+    updateItem(value, index) {
+      /** @type {ArrayFieldUpdateItemFunc} */
+      const updateItem = objGet(this.schema, 'itemFuncs.update')
+      if (typeof updateItem === 'function') {
+        updateItem(this.model, value, index)
+      }
+    },
+
+    removeItem(index) {
+      /** @type {ArrayFieldRemoveItemFunc} */
+      const removeItem = objGet(this.schema, 'itemFuncs.remove')
+      if (typeof removeItem === 'function') {
+        this.value = removeItem(this.model, index)
+        this.invalidateKeyPrefix()
+        return
+      }
+
       this.value = this.value.filter((_, i) => i !== index)
+      this.invalidateKeyPrefix()
     },
+
     getFieldType(fieldSchema) {
       return 'field-' + fieldSchema.type
     },
-    modelUpdated() {},
   },
 }
 </script>
@@ -195,5 +261,22 @@ export default {
   input.form-control {
     width: 200px;
   }
+}
+
+.full-width-array-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $kui-space-40;
+  width: 100%;
+}
+
+.array-item-pair-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: $kui-space-40;
+  justify-content: space-between;
+  width: 100%;
 }
 </style>

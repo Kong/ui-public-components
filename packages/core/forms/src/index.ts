@@ -20,6 +20,7 @@ export const getSharedFormName = (modelName: string, enabledAcmeCustomTemplate =
     // Pre and Post function plugins are using same component
     'pre-function': 'PostFunction',
     'exit-transformer': 'ExitTransformer',
+    'rate-limiting-advanced': 'RLAForm',
   }
 
   return mapping[modelName]
