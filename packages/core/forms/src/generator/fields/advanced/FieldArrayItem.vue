@@ -14,12 +14,9 @@
 <script lang="ts" setup>
 import { TrashIcon } from '@kong/icons'
 
-defineProps({
-  model: {
-    type: String,
-    default: '',
-  },
-})
+defineProps<{
+  model: Record<string, any>,
+}>()
 
 defineEmits<{
   (event: 'remove-item'): void,

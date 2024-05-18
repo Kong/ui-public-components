@@ -2,7 +2,7 @@ export const ArrayStringFieldSchema = {
   type: 'array',
   valueType: 'string',
   valueArrayType: 'array',
-  itemContainerComponent: 'FieldArrayItem',
+  itemContainerComponent: 'array-item',
   fieldClasses: 'kong-form-array-field',
   fieldItemsClasses: 'kong-form-array-field-item',
   inputAttributes: { class: 'form-control', style: { minWidth: '200px' } },

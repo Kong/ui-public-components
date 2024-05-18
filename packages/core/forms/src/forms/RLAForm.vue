@@ -60,7 +60,7 @@ const identifierSelectItems = computed(() => {
 const alwaysVisibleSchema = computed<Schema>(() => {
   return {
     fields: [
-      schemaFieldMap.value.selectionGroup,
+      // schemaFieldMap.value.selectionGroup,
       {
         type: 'array',
         hideAddItemButton: true,
@@ -85,10 +85,6 @@ const alwaysVisibleSchema = computed<Schema>(() => {
           },
           default: () => (['', 0]),
           formatLabel: (index) => i18n.t('rla.request_limits.label', { index: index + 1 }),
-          pairSet: ([limit, windowSize], model, index) => {
-            model['config-limit'][index!] = limit
-            model['config-window_size'][index!] = Number.parseInt(windowSize)
-          },
         } as PairFieldSchema,
         wrapper: 'FieldCardContainer',
         wrapperProps: {
@@ -97,22 +93,25 @@ const alwaysVisibleSchema = computed<Schema>(() => {
           subtitle: i18n.t('rla.request_limits.subtitle'),
         },
         get: (model: Record<string, any>) => {
-          if (!Array.isArray(model['config-limit'])) {
-            model['config-limit'] = []
+          const configLimit: (number | undefined)[] = model['config-limit']
+          const configWindowSize: (number | undefined)[] = model['config-window_size']
+
+          if (!Array.isArray(configLimit) || configLimit.length === 0) {
+            model['config-limit'] = [undefined]
           }
-          if (!Array.isArray(model['config-window_size'])) {
-            model['config-window_size'] = []
-          }
-          if (model['config-limit'].length === 0) {
-            model['config-limit'].push(undefined)
-          }
-          if (model['config-window_size'].length === 0) {
-            model['config-window_size'].push(undefined)
+          if (!Array.isArray(configWindowSize) || configWindowSize.length === 0) {
+            model['config-window_size'] = [undefined]
           }
 
-          const windowSize = model['config-window_size'] as (number | undefined)[]
-          return (model['config-limit'] as (number | undefined)[])
-            .map((limit, index) => ([limit, Array.isArray(windowSize) ? windowSize[index]?.toString() : undefined]))
+          return model['config-limit']
+            .map((limit, index) => ([
+              limit, model['config-window_size'][index]?.toString(),
+            ]))
+        },
+        set: (model, value, index) => {
+          console.log('set', model, value, index)
+          model['config-limit'][index] = value[0]
+          model['config-window_size'][index] = value[1]
         },
         itemFuncs: {
           add: (model, index) => {
@@ -157,10 +156,10 @@ const alwaysVisibleSchema = computed<Schema>(() => {
         insertText: {
           middle: ':',
         },
-        get: (model: Record<string, any>) =>
+        get: (model) =>
           [model['config-error_code'], model['config-error_message']],
-        pairSet: ([code, message], model) => {
-          model['config-error_code'] = code
+        set: (model, [code, message]) => {
+          model['config-error_code'] = Number.parseInt(code)
           model['config-error_message'] = message
         },
       } as PairFieldSchema,

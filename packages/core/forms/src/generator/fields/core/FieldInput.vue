@@ -47,7 +47,7 @@ const props = defineProps({
   },
   model: {
     type: Object as PropType<Record<string, any>>,
-    default: () => undefined,
+    required: true,
   },
   schema: {
     type: Object as PropType<FieldSchema>,

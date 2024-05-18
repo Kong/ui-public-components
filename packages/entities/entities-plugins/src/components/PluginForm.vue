@@ -649,7 +649,7 @@ const buildFormSchema = (parentKey: string, response: Record<string, any>, initi
       // This usually happens for a custom plugin, so we need to build the schema
       if (!itemFields) {
         initialFormSchema[field].fieldClasses = 'array-card-container-wrapper'
-        initialFormSchema[field].itemContainerComponent = 'FieldArrayCardContainer'
+        initialFormSchema[field].itemContainerComponent = 'array-card-container'
         initialFormSchema[field].items = {
           type: 'object',
           schema: {

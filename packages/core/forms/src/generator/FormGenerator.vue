@@ -1,4 +1,5 @@
 <template>
+  {{ model }}
   <div
     v-if="schema != null"
     class="vue-form-generator"
@@ -155,6 +156,7 @@ import isFunction from 'lodash-es/isFunction'
 import isNil from 'lodash-es/isNil'
 import formMixin from './FormMixin.vue'
 import formGroup from './FormGroup.vue'
+import { isEqual } from 'lodash-es'
 
 export default {
   name: 'FormGenerator',
@@ -166,6 +168,9 @@ export default {
       default: () => undefined,
     },
 
+    /**
+     * This should be the form model (complete)
+     */
     model: {
       type: Object,
       default: () => undefined,
@@ -245,8 +250,9 @@ export default {
     model: {
       deep: true,
       handler(newModel, oldModel) {
-        if (oldModel === newModel) {
-        // model property changed, skip
+        if (isEqual(oldModel, newModel)) {
+          // model property changed, skip
+          console.log('skipping')
           return
         }
 

@@ -22,7 +22,7 @@
         :model-value="value[0]"
         v-bind="schema.inputAttributes && schema.inputAttributes.former"
         type="number"
-        @update:model-value="(s: string) => value = [s, value[1]]"
+        @update:model-value="(s: string) => updateModelValue([s, value[1]], value)"
       />
       <div v-if="schema.insertText !== undefined && schema.insertText.middle">
         {{ schema.insertText.middle }}
@@ -31,7 +31,7 @@
         :model-value="value[1]"
         type="text"
         v-bind="schema.inputAttributes?.latter"
-        @update:model-value="(s: string) => value = [value[0], s]"
+        @update:model-value="(s: string) => updateModelValue([value[0], s], value)"
       />
       <div v-if="schema.insertText !== undefined && schema.insertText.trailing">
         {{ schema.insertText.trailing }}
@@ -61,7 +61,7 @@
 
 <script lang="ts" setup>
 import { AddIcon, RemoveIcon } from '@kong/icons'
-import { computed, toRefs } from 'vue'
+import { computed, toRef } from 'vue'
 import composables from '../../../composables'
 import type { PairFieldSchema, PairFieldValue } from '../types/pair'
 
@@ -70,8 +70,6 @@ const props = defineProps<{
   model: Record<string, any>
   schema: PairFieldSchema
   formOptions?: Record<string, any>
-
-  formModel?: Record<string, any>
 
   /**
    * This prop will be set when the field is nested inside an array field.
@@ -83,19 +81,17 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'model-updated': [value: PairFieldValue, modelKey: string, index?: number]
+  'model-updated': [value: PairFieldValue, modelKey?: string, index?: number]
   'add-item': [index: number]
   'remove-item': [index: number]
 }>()
 
-const propsRefs = toRefs(props)
-
-const { value, clearValidationErrors } = composables.useAbstractFields<PairFieldValue>({
-  model: propsRefs.model,
+const { value, updateModelValue, clearValidationErrors } = composables.useAbstractFields<PairFieldValue>({
+  model: toRef(props, 'model'),
   schema: props.schema,
   formOptions: props.formOptions,
   emitModelUpdated: (data) => {
-    props.schema.pairSet(data.value, props.formModel ?? props.model, props.arrayInfo?.index)
+    emit('model-updated', data.value, data.modelKey)
   },
 })
 

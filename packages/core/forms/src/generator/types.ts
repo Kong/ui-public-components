@@ -13,7 +13,7 @@ export interface FieldSchema extends Record<string, any> {
   inputType?: 'text' | 'number'
   pinned?: boolean
   get?: (model: Record<string, any>) => any
-  set?: (model: Record<string, any>, value: any) => any
+  set?: (model: Record<string, any>, value: any, ...args: any) => any
   multipleModelFields?: boolean
 }
 

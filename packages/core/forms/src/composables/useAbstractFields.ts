@@ -1,4 +1,4 @@
-import type { DebouncedFunc } from 'lodash-es'
+import { type DebouncedFunc } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import forEach from 'lodash-es/forEach'
 import objGet from 'lodash-es/get'
@@ -12,7 +12,7 @@ import { slugifyFormID } from '../generator/utils/schema'
 import validators from '../generator/utils/validators'
 
 interface AbstractFieldParams {
-  model?: Ref<Record<string, any> | undefined>,
+  model: Ref<Record<string, any> | undefined>,
   schema: FieldSchema,
   formOptions?: Record<string, any>,
   disabled?: boolean,
@@ -59,10 +59,10 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
       let val
 
       if (isFunction(objGet(formData.schema, 'get'))) {
-        val = formData.schema.get(formData.model?.value)
-      } else {
+        val = formData.schema.get!(formData.model?.value!)
+      } else if (formData.schema.model !== undefined) {
         val = objGet(formData.model?.value, formData.schema.model)
-      }
+      } // else: this field is managed externally
 
       return formatValueToField(val)
     },
@@ -267,7 +267,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
     return slugifyFormID(fieldSchema, idPrefix) + (unique ? '-' + uniqueId() : '')
   }
 
-  const getLabelId = (fieldSchema: Record<string, any>) => {
+  const getLabelID = (fieldSchema: Record<string, any>) => {
     return `${getFieldID(fieldSchema)}-label`
   }
 
@@ -293,7 +293,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
     value,
     clearValidationErrors,
     getFieldID,
-    getLabelId,
+    getLabelID,
     getFieldClasses,
     updateModelValue,
   }

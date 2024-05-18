@@ -39,7 +39,6 @@
               :model="model"
               :options="{ helpAsHtml: true }"
               :schema="{ fields: option.fields }"
-              @model-updated="updateModel"
             />
           </div>
         </div>
@@ -60,7 +59,7 @@ const props = defineProps({
   },
   model: {
     type: Object as PropType<Record<string, any>>,
-    default: () => undefined,
+    required: true,
   },
   schema: {
     type: Object as PropType<SelectionGroupFieldSchema>,
@@ -100,23 +99,22 @@ const checkedGroup = ref<number | null>(null)
 const fieldModel = ref({ ...props.model }) // keep local copy of original model
 const fieldSchema = ref<string[]>([])
 
-const updateModel = (value: any, model: string) => {
-  emit('model-updated', value, model)
+const updateModel = (newValue: any, model: string) => {
+  value.value[model] = newValue
 }
 
 watch(checkedGroup, (newValue, oldValue) => {
   // First time trigger shouldn't need to update the form model
   if (oldValue === null) {
     fieldModel.value = { ...props.model }
-    updateModelValue(value, { newValue })
     return
   }
 
   props.schema.fields[oldValue].fields?.forEach((field) => {
-    updateModel('', field.model!)
+    propsRefs.model.value[field.model!] = ''
   })
   props.schema.fields[newValue!].fields?.forEach((field) => {
-    updateModel(fieldModel.value[field.model!], field.model!)
+    propsRefs.model.value[field.model!] = fieldModel.value[field.model!]
   })
 })
 

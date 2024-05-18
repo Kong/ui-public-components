@@ -8,65 +8,63 @@
   >
     <div
       v-for="(item, index) in value"
-      :key="`${keyPrefix}-${index}`"
+      :key="index.toString()"
       :class="schema.fieldItemsClasses"
     >
       <component
-        :is="schema.itemContainerComponent"
+        :is="getFieldComponent(schema.itemContainerComponent)"
         v-if="schema.items && schema.itemContainerComponent"
         :array-info="{ index, size: value.length }"
-        :form-model="model"
-        :model="item"
-        :schema="generateSchema(value, schema.items, index)"
+        :model="model"
+        :schema="generateSchema(index)"
         @add-item="() => addItem(index)"
         @remove-item="() => removeItem(index)"
       >
         <component
-          :is="getFieldType(schema.items)"
+          :is="getFieldComponent(schema.items.type)"
           :array-info="{ index, size: value.length }"
           :array-size="value.length"
-          :form-model="model"
           :form-options="formOptions"
-          :model="item"
-          :schema="generateSchema(value, schema.items, index)"
+          :model="model"
+          :schema="generateSchema(index)"
+          @model-updated="(value: any) => updateItem(value, index)"
         />
       </component>
       <component
-        :is="getFieldType(schema.items)"
+        :is="getFieldComponent(schema.items.type)"
         v-else-if="schema.items"
         :array-info="{ index, size: value.length }"
         :array-size="value.length"
-        :form-model="model"
         :form-options="formOptions"
-        :model="item"
-        :schema="generateSchema(value, schema.items, index)"
+        :model="model"
+        :schema="generateSchema(index)"
         @add-item="() => addItem(index)"
+        @model-updated="(value: any) => updateItem(value, index)"
         @remove-item="() => removeItem(index)"
       />
       <component
-        :is="schema.itemContainerComponent"
+        :is="getFieldComponent(schema.itemContainerComponent)"
         v-else-if="schema.itemContainerComponent"
         :array-info="{ index, size: value.length }"
         :array-size="value.length"
         :data-testid="`${getFieldID(schema)}-item-${index}`"
-        :form-model="model"
-        :model="item"
-        :schema="generateSchema(value, schema.items, index)"
+        :model="model"
+        :schema="generateSchema(index)"
         @add-item="() => addItem(index)"
         @remove-item="() => removeItem(index)"
       >
         <FieldTextArea
           v-if="schema.inputAttributes?.type === 'textarea'"
-          :aria-labelledby="getLabelId(schema)"
+          :aria-labelledby="getLabelID(schema)"
           class="k-input"
           :form-options="formOptions"
-          :model="item"
-          :schema="generateSchema(value, schema.items, index)"
+          :model="model"
+          :schema="generateSchema(index)"
         />
         <input
           v-else
           v-model="value[index]"
-          :aria-labelledby="getLabelId(schema)"
+          :aria-labelledby="getLabelID(schema)"
           v-bind="schema.inputAttributes"
           :type="schema.inputAttributes?.type || 'text'"
         >
@@ -82,7 +80,7 @@
         v-else
         v-bind="schema.inputAttributes"
         v-model="value[index]"
-        :aria-labelledby="getLabelId(schema)"
+        :aria-labelledby="getLabelID(schema)"
         type="text"
       >
       <input
@@ -106,20 +104,15 @@
   </component>
 </template>
 
-<script>
-/**
- * @typedef {import('../types/array').ArrayFieldAddItemFunc} ArrayFieldAddItemFunc
- * @typedef {import('../types/array').ArrayFieldUpdateItemFunc} ArrayFieldUpdateItemFunc
- * @typedef {import('../types/array').ArrayFieldRemoveItemFunc} ArrayFieldRemoveItemFunc
- */
-
-import { TrashIcon } from '@kong/icons'
+<script setup lang="ts">
 import cloneDeep from 'lodash-es/cloneDeep'
-import objGet from 'lodash-es/get'
-import abstractField from '../abstractField'
+import { toRefs } from 'vue'
+import composables from '../../../composables'
+import type { FieldSchema } from '../../types'
 import FieldInput from '../core/FieldInput.vue'
 import FieldSelect from '../core/fieldSelect.vue'
 import FieldTextArea from '../core/fieldTextArea.vue'
+import type { ArrayFieldSchema } from '../types/array'
 import FieldArrayCardContainer from './FieldArrayCardContainer.vue'
 import FieldArrayItem from './FieldArrayItem.vue'
 import FieldAutoSuggest from './FieldAutoSuggest.vue'
@@ -130,126 +123,134 @@ import FieldObjectAdvanced from './FieldObjectAdvanced.vue'
 import FieldPair from './FieldPair.vue'
 import FieldRadio from './FieldRadio.vue'
 
-export default {
-  name: 'FieldArray',
-  components: {
-    FieldArrayCardContainer,
-    FieldArrayItem,
-    FieldAutoSuggest,
-    FieldCardContainer,
-    FieldPair,
-    FieldInput,
-    FieldMetric,
-    FieldObject,
-    FieldObjectAdvanced,
-    FieldRadio,
-    FieldSelect,
-    FieldTextArea,
-    TrashIcon,
+const props = withDefaults(defineProps<{
+  vfg: any
+  model: Record<string, any>
+  schema: ArrayFieldSchema
+  formOptions?: Record<string, any>
+  newElementButtonLabel: string
+  removeElementButtonLabel: string
+}>(), {
+  newElementButtonLabel: 'New Item',
+  removeElementButtonLabel: 'x',
+})
+
+const emit = defineEmits<{
+  (event: 'model-updated', value: any, keyPath: string): void
+}>()
+
+const propsRefs = toRefs(props)
+
+const { value, clearValidationErrors, getLabelID, getFieldID } = composables.useAbstractFields({
+  model: propsRefs.model,
+  schema: props.schema,
+  formOptions: props.formOptions,
+  emitModelUpdated: (data) => {
+    emit('model-updated', data.value, data.modelKey)
   },
-  mixins: [abstractField],
-  props: {
-    newElementButtonLabel: {
-      type: String,
-      default: 'New Item',
-    },
-    removeElementButtonLabel: {
-      type: String,
-      default: 'x',
-    },
-  },
-  data() {
-    return {
-      keyPrefix: Math.random().toString(36).substring(2),
+})
+
+defineExpose({
+  clearValidationErrors,
+})
+
+const generateSchema = (index: number) => {
+  // Instead of using schema directly, we make a copy to avoid schema object mutation side effects
+
+  let newItemSchema: any
+
+  if (props.schema.items !== undefined) {
+    newItemSchema = cloneDeep<FieldSchema>(props.schema.items)
+
+    newItemSchema.schema?.fields?.map?.((field: FieldSchema) => {
+      field.id = `${field.id || field.model}-${index}`
+      return field
+    })
+  }
+
+  if (newItemSchema === undefined) {
+    newItemSchema = {}
+  }
+
+  if (typeof newItemSchema?.get !== 'function') {
+    newItemSchema.get = () => value.value[index]
+  }
+
+  if (typeof newItemSchema?.set !== 'function') {
+    newItemSchema.set = (_: any, newValue: any) => {
+      value.value[index] = newValue
     }
-  },
-  methods: {
-    invalidateKeyPrefix() {
-      this.keyPrefix = Math.random().toString(36).substring(2)
-    },
+  }
 
-    generateSchema(rootValue, schema, index) {
-      // Instead of using schema directly, we make a copy to avoid schema object mutation side effects
+  return newItemSchema
+}
 
-      let copy
-      if (schema) {
-        copy = cloneDeep(schema)
+const getFieldComponent = (fieldType: string) => {
+  switch (fieldType) {
+    case 'array-card-container':
+      return FieldArrayCardContainer
+    case 'array-item':
+      return FieldArrayItem
+    case 'auto-suggest':
+      return FieldAutoSuggest
+    case 'card-container':
+      return FieldCardContainer
+    case 'input':
+      return FieldInput
+    case 'metric':
+      return FieldMetric
+    case 'object':
+      return FieldObject
+    case 'object-advanced':
+      return FieldObjectAdvanced
+    case 'pair':
+      return FieldPair
+    case 'radio':
+      return FieldRadio
+    case 'select':
+      return FieldSelect
+    case 'text-area':
+      return FieldTextArea
+    default:
+      console.warn('No matching field component found for field type:', fieldType)
+  }
+}
 
-        copy.schema?.fields?.map?.((field) => {
-          field.id = `${field.id || field.model}-${index}`
-          return field
-        })
-      }
+const addItem = (index?: number) => {
+  if (typeof props.schema?.itemFuncs?.add === 'function') {
+    props.schema.itemFuncs.add(props.model, index)
+    return
+  }
 
-      return {
-        ...copy,
-        set(model, value) {
-          rootValue[index] = value
-        },
-        get() {
-          return rootValue[index]
-        },
-      }
-    },
+  let newValue = value.value
+  let itemsDefaultValue
 
-    /**
-     *
-     * @param {number} index Optional. If provided, the new item will be inserted after the index.
-     */
-    addItem(index) {
-      /** @type {ArrayFieldAddItemFunc} */
-      const schemaAddItem = objGet(this.schema, 'itemFuncs.add')
-      if (typeof schemaAddItem === 'function') {
-        schemaAddItem(this.model, index)
-        this.invalidateKeyPrefix()
-        return
-      }
+  if (!newValue || !newValue.push) newValue = []
 
-      let value = this.value
-      let itemsDefaultValue
+  if (props.schema.items !== undefined && props.schema.items.default !== undefined) {
+    if (typeof props.schema.items.default === 'function') {
+      itemsDefaultValue = props.schema.items.default()
+    } else {
+      itemsDefaultValue = props.schema.items.default
+    }
+  }
 
-      if (!value || !value.push) value = []
+  newValue.push(itemsDefaultValue)
 
-      if (this.schema.items && this.schema.items.default) {
-        if (typeof this.schema.items.default === 'function') {
-          itemsDefaultValue = this.schema.items.default()
-        } else {
-          itemsDefaultValue = this.schema.items.default
-        }
-      }
+  value.value = newValue
+}
 
-      value.push(itemsDefaultValue)
+const updateItem = (newValue: any, index: number) => {
+  props.schema.set?.(props.model, newValue, index)
+}
 
-      this.value = [...value]
+const removeItem = (index: number) => {
+  if (typeof props.schema.itemFuncs?.remove === 'function') {
+    props.schema.itemFuncs.remove(props.model, index)
+    return
+  }
 
-      this.invalidateKeyPrefix()
-    },
-
-    updateItem(value, index) {
-      /** @type {ArrayFieldUpdateItemFunc} */
-      const updateItem = objGet(this.schema, 'itemFuncs.update')
-      if (typeof updateItem === 'function') {
-        updateItem(this.model, value, index)
-      }
-    },
-
-    removeItem(index) {
-      /** @type {ArrayFieldRemoveItemFunc} */
-      const removeItem = objGet(this.schema, 'itemFuncs.remove')
-      if (typeof removeItem === 'function') {
-        this.value = removeItem(this.model, index)
-        this.invalidateKeyPrefix()
-        return
-      }
-
-      this.value = this.value.filter((_, i) => i !== index)
-      this.invalidateKeyPrefix()
-    },
-
-    getFieldType(fieldSchema) {
-      return 'field-' + fieldSchema.type
-    },
-  },
+  value.value.splice(index, 1)
 }
 </script>
 

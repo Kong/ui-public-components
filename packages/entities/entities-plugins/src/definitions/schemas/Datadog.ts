@@ -54,7 +54,7 @@ export const dataDogSchema: DatadogSchema = {
           model: 'tags',
           label: 'Tags',
           type: 'array',
-          itemContainerComponent: 'FieldArrayItem',
+          itemContainerComponent: 'array-item',
           fieldClasses: 'kong-form-array-field',
           fieldItemsClasses: 'kong-form-array-field-item',
           inputAttributes: { class: 'form-control', style: { minWidth: '200px' } },

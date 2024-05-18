@@ -7,7 +7,7 @@ export type ArrayFieldRemoveItemFunc = (model: Record<string, any>, index: numbe
 export interface ArrayFieldSchema extends FieldSchema {
   type: 'array'
   containerComponent?: string
-  items?: any
+  items?: FieldSchema
   itemContainerComponent?: string
   itemFuncs?: {
     add?: ArrayFieldAddItemFunc
@@ -22,4 +22,5 @@ export interface ArrayFieldSchema extends FieldSchema {
    * Default to false.
    */
   hideAddItemButton?: boolean
+  set?: (model: Record<string, any>, value: any, index: number) => void
 }

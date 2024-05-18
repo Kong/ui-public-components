@@ -154,11 +154,15 @@ export default {
     updateModelValue(newValue, oldValue) {
       let changed = false
       if (isFunction(this.schema.set)) {
+        console.log('updateModelValue:set')
         this.schema.set(this.model, newValue)
         changed = true
       } else if (this.schema.model) {
+        console.log('updateModelValue:model')
         this.setModelValueByPath(this.schema.model, newValue)
         changed = true
+      } else {
+        console.log('updateModelValue:none')
       }
 
       if (changed) {
@@ -219,7 +223,7 @@ export default {
       return slugifyFormID(schema, idPrefix) + (unique ? '-' + uniqueId() : '')
     },
 
-    getLabelId(schema) {
+    getLabelID(schema) {
       return `${this.getFieldID(schema)}-label`
     },
 

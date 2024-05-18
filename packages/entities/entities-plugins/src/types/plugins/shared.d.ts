@@ -1,42 +1,19 @@
-interface Field {
-  model?: string
-  label: string
-  type: string
-  values?: string[]
-  id?: string
-  default?: string,
-  placeholder?: string,
-  hint?: string,
-  help?: string,
-  inputType?: 'text' | 'number'
-}
-
-interface ArrayItem extends Field {
-  itemContainerComponent: string
-  fieldClasses?: string
-  fieldItemsClasses?: string
-  inputAttributes?: {
-    class: string
-    style: {
-      minWidth: string
-    }
-  }
-}
+import type { VFG } from '@kong-ui-public/forms'
 
 export interface ItemsSchema {
-  type: string,
-  default?: object,
+  type: string
+  default?: object
   schema: {
-    fields: Array<Field | ArrayItem>
+    fields: Array<VFG.Field | VFG.ArrayItem>
   }
 }
 
 export interface PluginBasicSchema {
-  title: string,
-  plugin: string,
-  name: string,
-  endpoint: string,
-  schemaEndpoint: string,
+  title: string
+  plugin: string
+  name: string
+  endpoint: string
+  schemaEndpoint: string
 }
 
 export interface CommonSchemaFields {

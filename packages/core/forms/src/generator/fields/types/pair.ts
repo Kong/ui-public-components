@@ -5,7 +5,6 @@ export type PairFieldValue = [string, string]
 export interface PairFieldSchema extends FieldSchema {
   type: 'pair';
   multipleModelFields: true
-  pairSet: (value: PairFieldValue, model: Record<string, any>, index?: number) => void
   inputAttributes?: {
     former: any
     latter: any

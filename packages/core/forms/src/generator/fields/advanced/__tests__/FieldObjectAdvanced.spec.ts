@@ -83,7 +83,7 @@ describe('FieldObjectAdvanced', () => {
                         type: 'array',
                         valueType: 'string',
                         valueArrayType: 'string',
-                        itemContainerComponent: 'FieldArrayItem',
+                        itemContainerComponent: 'array-item',
                         fieldClasses: 'w-100',
                         fieldItemsClasses: 'd-flex mt-2 w-90',
                         inputAttributes: {

@@ -432,20 +432,21 @@ const getModel = (): Record<string, any> => {
 }
 
 // fired whenever the form data is modified
-const onModelUpdated = (model: any, schema: string) => {
-  const newData = { [schema]: model }
-  if (typeof props.schema[schema]?.modelTransformer === 'function') {
-    newData[schema] = props.schema[schema].modelTransformer(model)
-  }
-  const newModel = Object.assign({}, formModel, newData)
+const onModelUpdated = (value: any, modelKey: string) => {
+  console.log('PluginEntityForm: onModelUpdated', value, modelKey)
+  // const newData = { [modelKey]: value }
+  // if (typeof props.schema[modelKey]?.modelTransformer === 'function') {
+  //   newData[modelKey] = props.schema[modelKey].modelTransformer(value)
+  // }
+  // const newModel = Object.assign({}, formModel, newData)
 
-  Object.assign(formModel, newModel)
+  // Object.assign(formModel, newModel)
 
-  emit('model-updated', {
-    model: formModel,
-    originalModel,
-    data: getModel(),
-  })
+  // emit('model-updated', {
+  //   model: formModel,
+  //   originalModel,
+  //   data: getModel(),
+  // })
 }
 
 // special handling for problematic fields before we emit

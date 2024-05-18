@@ -4,7 +4,7 @@ export default {
       type: 'array',
       showRemoveButton: false,
       newElementButtonLabelClasses: 'kong-form-new-element-button-label',
-      itemContainerComponent: 'FieldArrayCardContainer',
+      itemContainerComponent: 'array-card-container',
       fieldClasses: 'array-card-container-wrapper',
 
       newElementButtonLabel: '+ Add Client JWK',
@@ -188,7 +188,7 @@ export default {
       type: 'array',
       showRemoveButton: false,
       newElementButtonLabelClasses: 'kong-form-new-element-button-label',
-      itemContainerComponent: 'FieldArrayCardContainer',
+      itemContainerComponent: 'array-card-container',
       fieldClasses: 'array-card-container-wrapper',
 
       newElementButtonLabel: '+ Add Cluster Node',
