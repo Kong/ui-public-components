@@ -138,12 +138,12 @@
 
 <script>
 /**
- * @typedef {import('./types').FGCollapsibleOptions} FGCollapsibleOptions
- * @typedef {import('./types').FGSlots} FGSlots
+ * @typedef {import('./types').FieldGroupCollapsibleOptions} FieldGroupCollapsibleOptions
+ * @typedef {import('./types').FieldGroupSlots} FieldGroupSlots
  *
  * @typedef PartialGroup
- * @prop {FGCollapsibleOptions=} collapsible
- * @prop {FGSlots=} slots
+ * @prop {FieldGroupCollapsibleOptions=} collapsible
+ * @prop {FieldGroupSlots=} slots
  *
  * @typedef {Record<string, any> & PartialGroup} Group
  */
@@ -155,6 +155,7 @@ import isFunction from 'lodash-es/isFunction'
 import isNil from 'lodash-es/isNil'
 import formMixin from './FormMixin.vue'
 import formGroup from './FormGroup.vue'
+import { isEqual } from 'lodash-es'
 
 export default {
   name: 'FormGenerator',
@@ -166,6 +167,9 @@ export default {
       default: () => undefined,
     },
 
+    /**
+     * This should be the form model (complete)
+     */
     model: {
       type: Object,
       default: () => undefined,
@@ -245,8 +249,7 @@ export default {
     model: {
       deep: true,
       handler(newModel, oldModel) {
-        if (oldModel === newModel) {
-        // model property changed, skip
+        if (isEqual(oldModel, newModel)) {
           return
         }
 
@@ -306,8 +309,8 @@ export default {
       this.$emit('validated', isValid, this.errors, this)
     },
 
-    onModelUpdated(newVal, schema) {
-      this.$emit('modelUpdated', newVal, schema)
+    onModelUpdated(value, modelKey) {
+      this.$emit('modelUpdated', value, modelKey)
     },
 
     // Validating the model properties

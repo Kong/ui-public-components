@@ -1,15 +1,5 @@
 <template>
   <div class="plugin-form-sandbox">
-    <h2>Konnect API</h2>
-    <PluginForm
-      :config="konnectConfig"
-      :plugin-id="id"
-      :plugin-type="plugin"
-      use-custom-names-for-plugin
-      @update="onUpdate"
-    />
-
-    <h2>Kong Manager API</h2>
     <PluginForm
       :config="kongManagerConfig"
       :plugin-id="id"

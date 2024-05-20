@@ -2,6 +2,6 @@ export interface MetricFieldsSchema {
   type: string
   showRemoveButton: boolean
   newElementButtonLabelClasses: string
-  itemContainerComponent: string
+  itemWrapperFieldType: string
   fieldClasses: string
 }

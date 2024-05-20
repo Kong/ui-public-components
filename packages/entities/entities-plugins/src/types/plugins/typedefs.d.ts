@@ -2,7 +2,7 @@ import type { Tags } from '../../types/plugins'
 
 interface ArrayItem {
   type: string,
-  itemContainerComponent: string,
+  itemWrapperFieldType: string,
   fieldClasses: string,
   fieldItemsClasses: string,
   newElementButtonLabelClasses: string,

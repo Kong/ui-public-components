@@ -26,62 +26,30 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onBeforeMount, onMounted, toRefs, type PropType } from 'vue'
-import type { DebouncedFunc } from 'lodash-es'
 import fecha from 'fecha'
+import type { DebouncedFunc } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import objGet from 'lodash-es/get'
 import isFunction from 'lodash-es/isFunction'
 import isNumber from 'lodash-es/isNumber'
-import composables from '../../../composables'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-const props = defineProps({
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  formOptions: {
-    type: Object as PropType<Record<string, any>>,
-    default: () => undefined,
-  },
-  model: {
-    type: Object as PropType<Record<string, any>>,
-    default: () => undefined,
-  },
-  schema: {
-    type: Object as PropType<Record<string, any>>,
-    required: true,
-  },
-  vfg: {
-    type: Object,
-    required: true,
-  },
-  /**
-   * TODO: stronger type
-   * TODO: pass this down to KInput error and errorMessage
-   */
-  errors: {
-    type: Array,
-    default: () => [],
-  },
-  hint: {
-    type: String,
-    default: '',
-  },
+const props = withDefaults(defineProps<{
+  errors?: any[],
+  hint?: string
+} & AbstractFieldComponentProps>(), {
+  errors: () => [],
+  hint: '',
 })
 
 const emit = defineEmits<{
-  (event: 'modelUpdated', value: any, model: Record<string, any>): void
+  (event: 'modelUpdated', value: any, keyPath: string): void
 }>()
 
-const propsRefs = toRefs(props)
-
-const { updateModelValue, getFieldID, clearValidationErrors, value: inputValue } = composables.useAbstractFields({
-  model: propsRefs.model,
-  schema: props.schema,
-  formOptions: props.formOptions,
-  emitModelUpdated: (data: { value: any, model: Record<string, any> }): void => {
-    emit('modelUpdated', data.value, data.model)
+const { updateModelValue, getFieldID, clearValidationErrors, value: inputValue } = useAbstractFields(props, {
+  emitModelUpdated: (data): void => {
+    emit('modelUpdated', data.value, data.modelKey)
   },
 })
 
@@ -90,7 +58,7 @@ defineExpose({
 })
 
 const inputType = computed((): string => {
-  const iType = props.schema?.inputType.toLowerCase()
+  const iType = props.schema?.inputType?.toLowerCase()
 
   // 'string' maps to 'text' input type
   // 'datetime' maps to 'datetime-local'

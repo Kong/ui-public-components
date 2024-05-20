@@ -73,12 +73,12 @@ export interface PluginFormState {
   errorMessage: string
 }
 
-export type PluginFieldType = 'switch' | 'input' | 'foreign' | 'selectionGroup' | 'tag' | 'multiselect' | 'select'
+export type PluginFieldType = 'switch' | 'input' | 'foreign' | 'selection-group' | 'tag' | 'multiselect' | 'select'
 
 export interface PluginTags {
   label: string
   name: string
-  type: 'switch' | 'input' | 'foreign' | 'selectionGroup' | 'tag'
+  type: 'switch' | 'input' | 'foreign' | 'selection-group' | 'tag'
   inputType: string
   valueType: string
   valueArrayType: string
@@ -171,7 +171,7 @@ export interface Item {
 
 interface ArrayItem {
   type: string
-  itemContainerComponent: string
+  itemWrapperFieldType: string
   fieldClasses: string
   fieldItemsClasses: string
   newElementButtonLabelClasses: string

@@ -2,7 +2,7 @@ import type { VaultAuthSchema } from '../../types/plugins/vault-auth'
 
 export const vaultAuthSchema: VaultAuthSchema = {
   'config-vault': {
-    type: 'AutoSuggest',
+    type: 'auto-suggest',
     entity: 'vaults',
     placeholder: 'Select a Vault',
     inputValues: {

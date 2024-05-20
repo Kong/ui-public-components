@@ -1,104 +1,109 @@
 <template>
   <div class="selection-group">
-    <div
-      v-for="(option, i) in schema.fields"
-      :key="i"
-      class="option-group"
-    >
-      <!-- Radio button -->
-      <div class="form-group">
-        <label
-          class="k-label"
-          :class="`${option.label}-check`"
+    <!-- Radio button -->
+    <div class="form-group">
+      <div class="radio-group">
+        <div
+          v-for="(option, i) in schema.fields"
+          :key="i"
+          class="option-group"
         >
-          <input
-            v-model="checkedGroup"
-            class="k-input"
-            type="radio"
-            :value="i"
+          <label
+            class="k-label"
+            :class="`${option.label}-check`"
           >
-          {{ option.label }}
-          <div class="control-help">{{ option.description }}</div>
-        </label>
+            <input
+              v-model="checkedGroup"
+              class="k-input"
+              type="radio"
+              :value="i"
+            >
+            {{ option.label }}
+            <div class="control-help">{{ option.description }}</div>
+          </label>
+        </div>
       </div>
 
-      <!-- Selected Field -->
       <div
-        v-show="option.fields && checkedGroup === i"
-        class="option-field"
+        v-for="(option, i) in schema.fields"
+        :key="i"
+        class="option-group"
       >
-        <div class="option-field-container">
-          <vue-form-generator
-            :model="model"
-            :options="{ helpAsHtml: true }"
-            :schema="{ fields: option.fields }"
-            @model-updated="updateModel"
-          />
+        <!-- Selected Field -->
+        <div
+          v-show="option.fields && checkedGroup === i"
+          class="option-field"
+        >
+          <div class="option-field-container">
+            <vue-form-generator
+              :model="model"
+              :options="{ helpAsHtml: true }"
+              :schema="{ fields: option.fields }"
+            />
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import abstractField from '../abstractField'
+<script setup lang="ts">
+import { onMounted, ref, toRefs, watch } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
+import type { FieldSchema } from 'src/generator/types'
 
-export default {
-  mixins: [abstractField],
+const props = withDefaults(defineProps<{
+  flatten: boolean
+} & AbstractFieldComponentProps>(), {
+  flatten: false,
+})
 
-  emits: ['model-updated'],
+const emit = defineEmits<{
+  'model-updated': [value: any, model: string]
+}>()
 
-  data() {
-    return {
-      checkedGroup: null,
-      fieldModel: { ...this.model }, // keep local copy of original model
-      fieldSchema: [],
-    }
-  },
+const propsRefs = toRefs(props)
 
-  watch: {
-    checkedGroup: {
-      handler(newVal, oldVal) {
-        // First time trigger shouldn't need to update the form model
-        if (oldVal === null) {
-          this.fieldModel = { ...this.model }
+const { clearValidationErrors } = useAbstractFields(props)
 
-          return
-        }
+defineExpose({
+  clearValidationErrors,
+})
 
-        const newFields = this.schema.fields[newVal].fields
-        const oldFields = this.schema.fields[oldVal].fields
+const checkedGroup = ref<number | null>(null)
+const fieldModel = ref({ ...props.model }) // keep local copy of original model
+const fieldSchema = ref<string[]>([])
 
-        oldFields && oldFields.forEach(field => this.updateModel('', field.model))
-        newFields && newFields.forEach(field => this.updateModel(this.fieldModel[field.model], field.model))
-      },
-    },
-  },
+watch(checkedGroup, (newValue, oldValue) => {
+  // First time trigger shouldn't need to update the form model
+  if (oldValue === null) {
+    fieldModel.value = { ...props.model }
+    return
+  }
 
-  async created() {
-    await this.$nextTick()
+  props.schema.fields[oldValue].fields?.forEach((field: FieldSchema) => {
+    propsRefs.model.value[field.model!] = ''
+  })
+  props.schema.fields[newValue!].fields?.forEach((field: FieldSchema) => {
+    propsRefs.model.value[field.model!] = fieldModel.value[field.model!]
+  })
+})
 
-    // Set checkedGroup based on model
-    this.schema.fields.forEach((field, i) => {
-      field.fields && field.fields.forEach(subField => {
-        if (this.model[subField.model]) {
-          this.checkedGroup = i
-          this.fieldSchema.push(subField.model)
-        }
-      })
+onMounted(() => {
+  // Set checkedGroup based on model
+  props.schema.fields.forEach((field: any, i: number) => {
+    field.fields && field.fields.forEach((subField: FieldSchema) => {
+      if (props.model?.[subField.model!]) {
+        checkedGroup.value = i
+        fieldSchema.value.push(subField.model!)
+      }
     })
+  })
 
-    if (this.checkedGroup === null) {
-      this.checkedGroup = 0
-    }
-  },
-
-  methods: {
-    updateModel(model, schema) {
-      this.$emit('model-updated', model, schema)
-    },
-  },
-}
+  if (checkedGroup.value === null) {
+    checkedGroup.value = 0
+  }
+})
 </script>
 
 <style lang="scss">
@@ -136,6 +141,15 @@ export default {
   .form-group,
   .option-field-container {
     margin-bottom: 0;
+  }
+
+  .form-group {
+    .radio-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: $kui-space-80
+    }
   }
 }
 </style>

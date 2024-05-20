@@ -5,7 +5,7 @@ export interface SAMLSchema extends CommonSchemaFields {
     type: string
     showRemoveButton: boolean
     newElementButtonLabelClasses: string
-    itemContainerComponent: string
+    itemWrapperFieldType: string
     fieldClasses: string
 
     newElementButtonLabel: string

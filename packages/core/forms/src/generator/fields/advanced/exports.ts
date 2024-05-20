@@ -4,6 +4,6 @@ export const customFields = [
   'array',
   'metric',
   'advanced',
-  'selectionGroup',
+  'selection-group',
   'object-advanced',
 ]

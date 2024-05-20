@@ -182,8 +182,8 @@ export default {
     fieldErrors(field) {
       return this.errors.filter((e) => e.field.fieldName === field.fieldName).map((item) => item.error)
     },
-    onModelUpdated(newVal, schema) {
-      this.$emit('modelUpdated', newVal, schema)
+    onModelUpdated(value, modelKey) {
+      this.$emit('modelUpdated', value, modelKey)
     },
     validate(calledParent) {
       return this.$refs.child.validate(calledParent)

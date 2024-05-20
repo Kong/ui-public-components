@@ -399,7 +399,7 @@ const defaultFormSchema: DefaultPluginsSchemaRecord = reactive({
   },
   // plugin scoping
   selectionGroup: {
-    type: !props.hideScopeSelection ? 'selectionGroup' : props.hideScopeSelection || (formType.value === EntityBaseFormType.Create && props.config.entityId) ? 'foreign' : 'selectionGroup',
+    type: !props.hideScopeSelection ? 'selection-group' : props.hideScopeSelection || (formType.value === EntityBaseFormType.Create && props.config.entityId) ? 'foreign' : 'selection-group',
     inputType: 'hidden',
     styleClasses: 'hide-label',
     fields: [
@@ -649,7 +649,7 @@ const buildFormSchema = (parentKey: string, response: Record<string, any>, initi
       // This usually happens for a custom plugin, so we need to build the schema
       if (!itemFields) {
         initialFormSchema[field].fieldClasses = 'array-card-container-wrapper'
-        initialFormSchema[field].itemContainerComponent = 'FieldArrayCardContainer'
+        initialFormSchema[field].itemWrapperFieldType = 'array-card-container'
         initialFormSchema[field].items = {
           type: 'object',
           schema: {
@@ -776,7 +776,7 @@ const initScopeFields = (): void => {
       model: 'service-id',
       label: t('plugins.form.scoping.gateway_service.label'),
       placeholder: t('plugins.form.scoping.gateway_service.placeholder'),
-      type: 'AutoSuggest',
+      type: 'auto-suggest',
       entity: 'services',
       inputValues: {
         fields: ['name', 'id'],
@@ -791,7 +791,7 @@ const initScopeFields = (): void => {
       model: 'route-id',
       label: t('plugins.form.scoping.route.label'),
       placeholder: t('plugins.form.scoping.route.placeholder'),
-      type: 'AutoSuggest',
+      type: 'auto-suggest',
       entity: 'routes',
       inputValues: {
         fields: ['name', 'id'],
@@ -806,7 +806,7 @@ const initScopeFields = (): void => {
       model: 'consumer-id',
       label: t('plugins.form.scoping.consumer.label'),
       placeholder: t('plugins.form.scoping.consumer.placeholder'),
-      type: 'AutoSuggest',
+      type: 'auto-suggest',
       entity: 'consumers',
       inputValues: {
         fields: ['username', 'custom_id', 'id'],
@@ -821,7 +821,7 @@ const initScopeFields = (): void => {
       model: 'consumer_group-id',
       label: t('plugins.form.scoping.consumer_group.label'),
       placeholder: t('plugins.form.scoping.consumer_group.placeholder'),
-      type: 'AutoSuggest',
+      type: 'auto-suggest',
       entity: 'consumer_groups',
       entityDataKey: 'consumer_group',
       inputValues: {

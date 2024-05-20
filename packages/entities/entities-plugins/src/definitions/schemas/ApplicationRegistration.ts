@@ -21,7 +21,7 @@ export const applicationRegistrationSchema: AppRegFormSchema = {
     styleClasses: 'kong-form-hidden-field-wrapper',
   },
   'service-id': {
-    type: 'AutoSuggest',
+    type: 'auto-suggest',
     label: 'Gateway Service',
     styleClasses: 'bottom-border',
     description: 'Specific Gateway Service in this workspace',

@@ -1,7 +1,7 @@
 <template>
   <div class="key-value-pairs-editor">
     <div
-      v-for="(pair, index) in pairs"
+      v-for="(pair, index) in value"
       :key="index"
       class="pair-item"
     >
@@ -69,13 +69,13 @@ export default {
 
   created() {
     if (!this.value) {
-      this.value = {}
+      this.value = []
     }
 
     const modelPairs = this.model?.[this.schema?.model] ?? {}
 
     Object.keys(modelPairs).forEach((key) => {
-      this.pairs.push({
+      this.value.push({
         key,
         value: modelPairs[key],
       })
@@ -84,25 +84,25 @@ export default {
 
   methods: {
     onInput(e, index, type) {
-      this.pairs[index][type] = e.target.value
+      this.value[index][type] = e.target.value
     },
 
     updateValue() {
-      this.value = this.pairs.reduce((acc, { key, value }) => ({
+      this.value.reduce((acc, { key, value }) => ({
         ...acc,
         ...(key && value ? { [key]: value } : null),
       }), {})
     },
 
     addPair() {
-      this.pairs.push({
+      this.value.push({
         key: '',
         value: '',
       })
     },
 
     removePair(index) {
-      this.pairs.splice(index, 1)
+      this.value.splice(index, 1)
     },
   },
 }

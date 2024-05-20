@@ -1,6 +1,6 @@
 <template>
   <KMultiselect
-    :aria-labelledby="getLabelId(schema)"
+    :aria-labelledby="getLabelID(schema)"
     data-testid="field-multiselect"
     :items="schema.values"
     :label-attributes="{ info: schema.help }"
@@ -12,18 +12,19 @@
   />
 </template>
 
-<script>
-import abstractField from '../abstractField'
+<script setup lang="ts">
+import { defineProps } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-export default {
-  mixins: [abstractField],
+const props = defineProps<AbstractFieldComponentProps>()
 
-  emits: ['model-updated'],
+const { value, updateModelValue, getLabelID, clearValidationErrors } = useAbstractFields(props)
 
-  methods: {
-    onUpdate(value) {
-      this.$emit('model-updated', value, this.schema.model)
-    },
-  },
+defineExpose({
+  clearValidationErrors,
+})
+
+const onUpdate = (newValue: any) => {
+  updateModelValue(newValue, value)
 }
 </script>

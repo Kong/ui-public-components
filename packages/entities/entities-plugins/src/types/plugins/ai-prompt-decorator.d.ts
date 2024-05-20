@@ -11,7 +11,7 @@ export interface AIPromptDecoratorSchema extends CommonSchemaFields {
     type: string
     showRemoveButton: boolean
     newElementButtonLabelClasses: string
-    itemContainerComponent: string
+    itemWrapperFieldType: string
     fieldClasses: string
 
     newElementButtonLabel: string
@@ -22,7 +22,7 @@ export interface AIPromptDecoratorSchema extends CommonSchemaFields {
     type: string
     showRemoveButton: boolean
     newElementButtonLabelClasses: string
-    itemContainerComponent: string
+    itemWrapperFieldType: string
     fieldClasses: string
 
     newElementButtonLabel: string
