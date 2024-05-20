@@ -15,6 +15,7 @@ export interface FieldSchema extends Record<string, any> {
   get?: (model: Record<string, any>) => any
   set?: (model: Record<string, any>, value: any, ...args: any) => any
   multipleModelFields?: boolean
+  modelTransformer?: <M = any>(model: M) => M
 }
 
 export type FieldGroupCollapsibleOptions = boolean | {

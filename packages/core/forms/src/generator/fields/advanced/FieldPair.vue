@@ -1,7 +1,7 @@
 <template>
   <div class="item-wrapper">
     <KLabel
-      v-if="arrayInfo !== undefined && label"
+      v-if="parentArray !== undefined && label"
       :aria-describedby="help ? valueTooltipA11yId : undefined"
       :for="valueInputA11yId"
       :info="help"
@@ -38,19 +38,19 @@
       </div>
 
       <div
-        v-if="arrayInfo !== undefined"
+        v-if="parentArray !== undefined"
         class="action-buttons"
       >
         <KButton
           appearance="tertiary"
-          :disabled="arrayInfo.size <= 1"
-          @click="() => props.arrayInfo && emit('remove-item', props.arrayInfo.index)"
+          :disabled="parentArray.size <= 1"
+          @click="() => props.parentArray && emit('remove-item', props.parentArray.index)"
         >
           <RemoveIcon />
         </KButton>
         <KButton
           appearance="tertiary"
-          @click="() => props.arrayInfo && emit('add-item', props.arrayInfo.index)"
+          @click="() => props.parentArray && emit('add-item', props.parentArray.index)"
         >
           <AddIcon />
         </KButton>
@@ -61,8 +61,9 @@
 
 <script lang="ts" setup>
 import { AddIcon, RemoveIcon } from '@kong/icons'
-import { computed, toRef } from 'vue'
-import composables from '../../../composables'
+import { computed } from 'vue'
+import useAbstractFields from '../../../composables/useAbstractFields'
+import type { ArrayFieldItemFieldProps } from '../types/array'
 import type { PairFieldSchema, PairFieldValue } from '../types/pair'
 
 const props = defineProps<{
@@ -70,15 +71,7 @@ const props = defineProps<{
   model: Record<string, any>
   schema: PairFieldSchema
   formOptions?: Record<string, any>
-
-  /**
-   * This prop will be set when the field is nested inside an array field.
-   */
-  arrayInfo?: {
-    index: number
-    size: number
-  }
-}>()
+} & ArrayFieldItemFieldProps>()
 
 const emit = defineEmits<{
   'model-updated': [value: PairFieldValue, modelKey?: string, index?: number]
@@ -86,10 +79,7 @@ const emit = defineEmits<{
   'remove-item': [index: number]
 }>()
 
-const { value, updateModelValue, clearValidationErrors } = composables.useAbstractFields<PairFieldValue>({
-  model: toRef(props, 'model'),
-  schema: props.schema,
-  formOptions: props.formOptions,
+const { value, updateModelValue, clearValidationErrors } = useAbstractFields<PairFieldValue>(props, {
   emitModelUpdated: (data) => {
     emit('model-updated', data.value, data.modelKey)
   },
@@ -100,25 +90,25 @@ defineExpose({
 })
 
 const label = computed(() => {
-  if (typeof props.schema.formatLabel === 'function' && props.arrayInfo !== undefined) {
-    return props.schema.formatLabel(props.arrayInfo.index, value.value)
+  if (typeof props.schema.formatLabel === 'function' && props.parentArray !== undefined) {
+    return props.schema.formatLabel(props.parentArray.index, value.value)
   }
   return props.schema.label
 })
 
 const help = computed(() => {
-  if (typeof props.schema.formatHelp === 'function' && props.arrayInfo !== undefined) {
-    return props.schema.formatHelp(props.arrayInfo.index, value.value)
+  if (typeof props.schema.formatHelp === 'function' && props.parentArray !== undefined) {
+    return props.schema.formatHelp(props.parentArray.index, value.value)
   }
   return props.schema.help
 })
 
 const valueTooltipA11yId = computed(() =>
-  `pair-${Math.random().toString(36).substring(2)}-tooltip-${props.arrayInfo?.index ?? '0'}`,
+  `pair-${Math.random().toString(36).substring(2)}-tooltip-${props.parentArray?.index ?? '0'}`,
 )
 
 const valueInputA11yId = computed(() =>
-  `pair-${Math.random().toString(36).substring(2)}-value-${props.arrayInfo?.index ?? '0'}`,
+  `pair-${Math.random().toString(36).substring(2)}-value-${props.parentArray?.index ?? '0'}`,
 )
 </script>
 

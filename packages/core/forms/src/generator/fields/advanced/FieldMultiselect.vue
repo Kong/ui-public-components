@@ -12,18 +12,15 @@
   />
 </template>
 
-<script>
-import abstractField from '../abstractField'
+<script setup lang="ts">
+import { defineProps } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-export default {
-  mixins: [abstractField],
+const props = defineProps<AbstractFieldComponentProps>()
 
-  emits: ['model-updated'],
+const { value, updateModelValue, getLabelID } = useAbstractFields(props)
 
-  methods: {
-    onUpdate(value) {
-      this.$emit('model-updated', value, this.schema.model)
-    },
-  },
+const onUpdate = (newValue: any) => {
+  updateModelValue(newValue, value)
 }
 </script>

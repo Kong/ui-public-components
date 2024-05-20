@@ -1,5 +1,4 @@
 <template>
-  {{ model }}
   <div
     v-if="schema != null"
     class="vue-form-generator"
@@ -251,8 +250,6 @@ export default {
       deep: true,
       handler(newModel, oldModel) {
         if (isEqual(oldModel, newModel)) {
-          // model property changed, skip
-          console.log('skipping')
           return
         }
 

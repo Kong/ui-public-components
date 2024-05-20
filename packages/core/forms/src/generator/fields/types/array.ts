@@ -24,3 +24,10 @@ export interface ArrayFieldSchema extends FieldSchema {
   hideAddItemButton?: boolean
   set?: (model: Record<string, any>, value: any, index: number) => void
 }
+
+export interface ArrayFieldItemFieldProps {
+  parentArray: {
+    index: number
+    size: number
+  }
+}

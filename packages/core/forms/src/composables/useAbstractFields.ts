@@ -6,16 +6,23 @@ import isFunction from 'lodash-es/isFunction'
 import isString from 'lodash-es/isString'
 import arrayUniq from 'lodash-es/uniq'
 import uniqueId from 'lodash-es/uniqueId'
-import { computed, ref, type Ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import type { FieldSchema } from '../generator/types'
 import { slugifyFormID } from '../generator/utils/schema'
 import validators from '../generator/utils/validators'
 
-interface AbstractFieldParams {
-  model: Ref<Record<string, any> | undefined>,
-  schema: FieldSchema,
-  formOptions?: Record<string, any>,
-  disabled?: boolean,
+/**
+ * The base interface for all field components that are make use of the useAbstractFields composable.
+ */
+export interface AbstractFieldComponentProps<S extends FieldSchema = FieldSchema> {
+  vfg: any // not sure if this is still needed
+  model: Record<string, any>
+  schema: S
+  formOptions?: Record<string, any>
+  disabled?: boolean
+}
+
+export interface UseAbstractFieldsEmits {
   emitModelUpdated?: (data: {
     value: any
     modelKey: string
@@ -27,7 +34,8 @@ interface AbstractFieldParams {
   }) => void
 }
 
-export default function useAbstractFields<M = any>(formData: AbstractFieldParams) {
+export default function useAbstractFields<M = any>(props: AbstractFieldComponentProps, emits?: UseAbstractFieldsEmits) {
+  const model = toRef(props, 'model')
   const errors = ref<string[]>([])
   const debouncedValidateFunc = ref<DebouncedFunc<(calledParent?: any) => any[]> | null>(null)
 
@@ -58,10 +66,10 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
     get() {
       let val
 
-      if (isFunction(objGet(formData.schema, 'get'))) {
-        val = formData.schema.get!(formData.model?.value!)
-      } else if (formData.schema.model !== undefined) {
-        val = objGet(formData.model?.value, formData.schema.model)
+      if (isFunction(objGet(props.schema, 'get'))) {
+        val = props.schema.get!(model.value!)
+      } else if (props.schema.model !== undefined) {
+        val = objGet(model.value, props.schema.model)
       } // else: this field is managed externally
 
       return formatValueToField(val)
@@ -85,11 +93,11 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
   const validate = (calledParent?: any) => {
     clearValidationErrors()
 
-    const schemaValidator = formData.schema?.validator
-    const validateAsync = objGet(formData.formOptions, 'validateAsync', false)
+    const schemaValidator = props.schema?.validator
+    const validateAsync = objGet(props.formOptions, 'validateAsync', false)
     let results: any[] = []
 
-    if (schemaValidator && formData.schema.readonly !== true && formData.disabled !== true) {
+    if (schemaValidator && props.schema.readonly !== true && props.disabled !== true) {
       const validators = []
 
       if (!Array.isArray(schemaValidator)) {
@@ -102,9 +110,9 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
 
       forEach(validators, validator => {
         if (validateAsync) {
-          results.push(validator(value.value, formData.schema, formData.model?.value))
+          results.push(validator(value.value, props.schema, model.value))
         } else {
-          const result = validator(value.value, formData.schema, formData.model?.value)
+          const result = validator(value.value, props.schema, model.value)
 
           if (result && isFunction(result.then)) {
             result.then((err: any) => {
@@ -114,9 +122,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
 
               const isValid = errors.value.length === 0
 
-              if (formData.emitValidated) {
-                formData.emitValidated({ isValid, errors: errors.value, field: formData.schema })
-              }
+              emits?.emitValidated?.({ isValid, errors: errors.value, field: props.schema })
             })
           } else if (result) {
             results = results.concat(result)
@@ -137,16 +143,14 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
         }
       })
 
-      if (isFunction(formData.schema?.onValidated)) {
-        formData.schema.onValidated(formData.model?.value, fieldErrors, formData.schema)
+      if (isFunction(props.schema?.onValidated)) {
+        props.schema.onValidated(model.value, fieldErrors, props.schema)
       }
 
       if (!calledParent) {
         const isValid = fieldErrors.length === 0
 
-        if (formData.emitValidated) {
-          formData.emitValidated({ isValid, errors: fieldErrors, field: formData.schema })
-        }
+        emits?.emitValidated?.({ isValid, errors: fieldErrors, field: props.schema })
       }
 
       errors = fieldErrors
@@ -165,7 +169,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
     if (!isFunction(debouncedValidateFunc.value)) {
       debouncedValidateFunc.value = debounce(
         validate,
-        objGet(formData.schema, 'validateDebounceTime', objGet(formData.formOptions, 'validateDebounceTime', 500)),
+        objGet(props.schema, 'validateDebounceTime', objGet(props.formOptions, 'validateDebounceTime', 500)),
       )
     } else {
       debouncedValidateFunc.value()
@@ -176,29 +180,33 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
    * This is called every time the value of an input is changed and should handle validation/emitting modelUpdated events.
    */
   const updateModelValue = (newValue: M, oldValue: M) => {
-    let changed = false
+    let finalValue = newValue
+    if (typeof props.schema.modelTransformer === 'function') {
+      finalValue = props.schema.modelTransformer(newValue)
+    }
 
-    if (isFunction(formData.schema.set)) {
-      formData.schema.set(formData.model?.value!, newValue)
+    let changed = false
+    if (isFunction(props.schema.set)) {
+      props.schema.set(model.value!, finalValue)
       changed = true
-    } else if (formData.schema.model) {
-      setModelValueByPath(formData.schema.model, newValue)
+    } else if (props.schema.model) {
+      setModelValueByPath(props.schema.model, finalValue)
       changed = true
-    } else if (formData.schema.multipleModelFields) {
+    } else if (props.schema.multipleModelFields) {
       changed = true
     }
 
     if (changed) {
-      if (formData.emitModelUpdated && formData.model?.value) {
-        formData.emitModelUpdated({ value: newValue, modelKey: formData.schema.model! })
+      if (model.value) {
+        emits?.emitModelUpdated?.({ value: finalValue, modelKey: props.schema.model! })
       }
 
-      if (isFunction(formData.schema.onChanged)) {
-        formData.schema.onChanged(formData.model?.value, newValue, oldValue, formData.schema)
+      if (isFunction(props.schema.onChanged)) {
+        props.schema.onChanged(model.value, finalValue, oldValue, props.schema)
       }
 
-      if (objGet(formData.formOptions, 'validateAfterChanged', false) === true) {
-        if (objGet(formData.schema, 'validateDebounceTime', objGet(formData.formOptions, 'validateDebounceTime', 0)) > 0) {
+      if (objGet(props.formOptions, 'validateAfterChanged', false) === true) {
+        if (objGet(props.schema, 'validateDebounceTime', objGet(props.formOptions, 'validateDebounceTime', 0)) > 0) {
           debouncedValidate()
         } else {
           validate()
@@ -233,7 +241,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
     // strip a leading dot
     pathStr = pathStr.replace(/^\./, '')
 
-    let dataModel = formData.model?.value || {}
+    let dataModel = model.value || {}
     let index = 0
     const arr = pathStr.split('.')
     const arrLength = arr.length
@@ -262,7 +270,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
   }
 
   const getFieldID = (fieldSchema: Record<string, any>, unique = false) => {
-    const idPrefix = objGet(formData.formOptions, 'fieldIdPrefix', '')
+    const idPrefix = objGet(props.formOptions, 'fieldIdPrefix', '')
 
     return slugifyFormID(fieldSchema, idPrefix) + (unique ? '-' + uniqueId() : '')
   }
@@ -272,7 +280,7 @@ export default function useAbstractFields<M = any>(formData: AbstractFieldParams
   }
 
   const getFieldClasses = () => {
-    return objGet(formData.schema, 'fieldClasses', [])
+    return objGet(props.schema, 'fieldClasses', [])
   }
 
   /**

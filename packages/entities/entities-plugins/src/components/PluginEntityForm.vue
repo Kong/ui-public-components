@@ -449,6 +449,14 @@ const onModelUpdated = (value: any, modelKey: string) => {
   // })
 }
 
+watch(formModel, (newModel) => {
+  emit('model-updated', {
+    model: newModel,
+    originalModel,
+    data: getModel(),
+  })
+}, { deep: true })
+
 // special handling for problematic fields before we emit
 const updateModel = (data: Record<string, any>, parent?: string) => {
   Object.keys(data).forEach(key => {
@@ -545,10 +553,10 @@ const initFormModel = (): void => {
       if ((props.record.consumer_id || props.record.consumer) || (props.record.service_id || props.record.service) ||
           (props.record.route_id || props.record.route) || (props.record.consumer_group_id || props.record.consumer_group)) {
         updateModel({
-          service_id: props.record.service_id || props.record.service,
-          route_id: props.record.route_id || props.record.route,
-          consumer_id: props.record.consumer_id || props.record.consumer,
-          consumer_group_id: props.record.consumer_group_id || props.record.consumer_group,
+          'service-id': props.record.service_id || props.record.service?.id || props.record.service,
+          'route-id': props.record.route_id || props.record.route?.id || props.record.route,
+          'consumer-id': props.record.consumer_id || props.record.consumer?.id || props.record.consumer,
+          'consumer_group-id': props.record.consumer_group_id || props.record.consumer_group?.id || props.record.consumer_group,
         })
       }
 

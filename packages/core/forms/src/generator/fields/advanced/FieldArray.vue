@@ -7,7 +7,7 @@
     v-bind="schema.wrapperProps"
   >
     <div
-      v-for="(item, index) in value"
+      v-for="(_, index) in value"
       :key="index.toString()"
       :class="schema.fieldItemsClasses"
     >
@@ -106,8 +106,8 @@
 
 <script setup lang="ts">
 import cloneDeep from 'lodash-es/cloneDeep'
-import { toRefs } from 'vue'
-import composables from '../../../composables'
+import type { AbstractFieldComponentProps } from 'src/composables/useAbstractFields'
+import useAbstractFields from '../../../composables/useAbstractFields'
 import type { FieldSchema } from '../../types'
 import FieldInput from '../core/FieldInput.vue'
 import FieldSelect from '../core/fieldSelect.vue'
@@ -124,13 +124,9 @@ import FieldPair from './FieldPair.vue'
 import FieldRadio from './FieldRadio.vue'
 
 const props = withDefaults(defineProps<{
-  vfg: any
-  model: Record<string, any>
-  schema: ArrayFieldSchema
-  formOptions?: Record<string, any>
   newElementButtonLabel: string
   removeElementButtonLabel: string
-}>(), {
+} & AbstractFieldComponentProps<ArrayFieldSchema>>(), {
   newElementButtonLabel: 'New Item',
   removeElementButtonLabel: 'x',
 })
@@ -139,12 +135,7 @@ const emit = defineEmits<{
   (event: 'model-updated', value: any, keyPath: string): void
 }>()
 
-const propsRefs = toRefs(props)
-
-const { value, clearValidationErrors, getLabelID, getFieldID } = composables.useAbstractFields({
-  model: propsRefs.model,
-  schema: props.schema,
-  formOptions: props.formOptions,
+const { value, clearValidationErrors, getLabelID, getFieldID } = useAbstractFields(props, {
   emitModelUpdated: (data) => {
     emit('model-updated', data.value, data.modelKey)
   },

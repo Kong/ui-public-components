@@ -48,35 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs, watch, type PropType } from 'vue'
-import useAbstractFields from '../../../composables/useAbstractFields'
-import type { SelectionGroupFieldSchema } from '../types/selection-group'
+import { onMounted, ref, toRefs, watch } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-const props = defineProps({
-  vfg: {
-    type: Object,
-    required: true,
-  },
-  model: {
-    type: Object as PropType<Record<string, any>>,
-    required: true,
-  },
-  schema: {
-    type: Object as PropType<SelectionGroupFieldSchema>,
-    required: true,
-  },
-  formOptions: {
-    type: Object as PropType<Record<string, any>>,
-    default: () => undefined,
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  flatten: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<{
+  flatten: boolean
+} & AbstractFieldComponentProps>(), {
+  flatten: false,
 })
 
 const emit = defineEmits<{
@@ -85,11 +63,7 @@ const emit = defineEmits<{
 
 const propsRefs = toRefs(props)
 
-const { value, updateModelValue, clearValidationErrors } = useAbstractFields({
-  model: propsRefs.model,
-  schema: props.schema,
-  formOptions: props.formOptions,
-})
+const { clearValidationErrors } = useAbstractFields(props)
 
 defineExpose({
   clearValidationErrors,
@@ -98,10 +72,6 @@ defineExpose({
 const checkedGroup = ref<number | null>(null)
 const fieldModel = ref({ ...props.model }) // keep local copy of original model
 const fieldSchema = ref<string[]>([])
-
-const updateModel = (newValue: any, model: string) => {
-  value.value[model] = newValue
-}
 
 watch(checkedGroup, (newValue, oldValue) => {
   // First time trigger shouldn't need to update the form model

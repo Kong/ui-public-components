@@ -86,12 +86,6 @@ const alwaysVisibleSchema = computed<Schema>(() => {
           default: () => (['', 0]),
           formatLabel: (index) => i18n.t('rla.request_limits.label', { index: index + 1 }),
         } as PairFieldSchema,
-        wrapper: 'FieldCardContainer',
-        wrapperProps: {
-          title: i18n.t('rla.request_limits.title'),
-          titleTooltip: i18n.t('rla.request_limits.help'),
-          subtitle: i18n.t('rla.request_limits.subtitle'),
-        },
         get: (model: Record<string, any>) => {
           const configLimit: (number | undefined)[] = model['config-limit']
           const configWindowSize: (number | undefined)[] = model['config-window_size']
