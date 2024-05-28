@@ -59,7 +59,7 @@ const finalSchema = computed((): Object => {
     if (f.model !== 'tags' && (f.valueType === 'array' || f.type === 'array')) {
       f.type = 'array'
       f.valueArrayType = 'array'
-      f.itemContainerComponent = 'FieldArrayItem'
+      f.itemContainerComponent = 'array-item'
       f.fieldClasses = 'post-function-array-item-container'
       f.fieldItemsClasses = 'post-function-array-item'
       f.inputAttributes = { ...f.inputAttributes, type: 'textarea' }

@@ -1,4 +1,5 @@
 <template>
+  {{ value }}
   <div
     :id="getFieldID(schema)"
     class="object-advanced-wrapper"

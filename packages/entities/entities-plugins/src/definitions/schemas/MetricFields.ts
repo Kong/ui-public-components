@@ -4,6 +4,6 @@ export const metricFieldsSchema: MetricFieldsSchema = {
   type: 'array',
   showRemoveButton: false,
   newElementButtonLabelClasses: 'kong-form-new-element-button-label',
-  itemContainerComponent: 'FieldMetric',
+  itemContainerComponent: 'metric',
   fieldClasses: 'metrics-wrapper',
 }

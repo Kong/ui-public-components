@@ -1,12 +1,4 @@
 <template>
-  <h2>Konnect API</h2>
-  <PluginConfigCard
-    :config="konnectConfig"
-    @fetch:error="onError"
-    @fetch:success="onSuccess"
-  />
-
-  <h2>Kong Manager API</h2>
   <PluginConfigCard
     :config="kongManagerConfig"
     @fetch:error="onError"

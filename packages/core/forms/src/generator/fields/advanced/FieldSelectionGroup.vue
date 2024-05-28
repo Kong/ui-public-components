@@ -41,7 +41,6 @@
               :model="model"
               :options="{ helpAsHtml: true }"
               :schema="{ fields: option.fields }"
-              @model-updated="updateModel"
             />
           </div>
         </div>
@@ -89,65 +88,62 @@
   </div>
 </template>
 
-<script>
-import abstractField from '../abstractField'
+<script setup lang="ts">
+import { onMounted, ref, toRefs, watch } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-export default {
-  mixins: [abstractField],
+const props = withDefaults(defineProps<{
+  flatten: boolean
+} & AbstractFieldComponentProps>(), {
+  flatten: false,
+})
 
-  emits: ['model-updated'],
+const emit = defineEmits<{
+  'model-updated': [value: any, model: string]
+}>()
 
-  data() {
-    return {
-      checkedGroup: null,
-      fieldModel: { ...this.model }, // keep local copy of original model
-      fieldSchema: [],
-    }
-  },
+const propsRefs = toRefs(props)
 
-  watch: {
-    checkedGroup: {
-      handler(newVal, oldVal) {
-        // First time trigger shouldn't need to update the form model
-        if (oldVal === null) {
-          this.fieldModel = { ...this.model }
+const { clearValidationErrors } = useAbstractFields(props)
 
-          return
-        }
+defineExpose({
+  clearValidationErrors,
+})
 
-        const newFields = this.schema.fields[newVal].fields
-        const oldFields = this.schema.fields[oldVal].fields
+const checkedGroup = ref<number | null>(null)
+const fieldModel = ref({ ...props.model }) // keep local copy of original model
+const fieldSchema = ref<string[]>([])
 
-        oldFields && oldFields.forEach(field => this.updateModel('', field.model))
-        newFields && newFields.forEach(field => this.updateModel(this.fieldModel[field.model], field.model))
-      },
-    },
-  },
+watch(checkedGroup, (newValue, oldValue) => {
+  // First time trigger shouldn't need to update the form model
+  if (oldValue === null) {
+    fieldModel.value = { ...props.model }
+    return
+  }
 
-  async created() {
-    await this.$nextTick()
+  props.schema.fields[oldValue].fields?.forEach((field) => {
+    propsRefs.model.value[field.model!] = ''
+  })
+  props.schema.fields[newValue!].fields?.forEach((field) => {
+    propsRefs.model.value[field.model!] = fieldModel.value[field.model!]
+  })
+})
 
-    // Set checkedGroup based on model
-    this.schema.fields.forEach((field, i) => {
-      field.fields && field.fields.forEach(subField => {
-        if (this.model[subField.model]) {
-          this.checkedGroup = i
-          this.fieldSchema.push(subField.model)
-        }
-      })
+onMounted(() => {
+  // Set checkedGroup based on model
+  props.schema.fields.forEach((field, i) => {
+    field.fields && field.fields.forEach((subField) => {
+      if (props.model?.[subField.model!]) {
+        checkedGroup.value = i
+        fieldSchema.value.push(subField.model!)
+      }
     })
+  })
 
-    if (this.checkedGroup === null) {
-      this.checkedGroup = 0
-    }
-  },
-
-  methods: {
-    updateModel(model, schema) {
-      this.$emit('model-updated', model, schema)
-    },
-  },
-}
+  if (checkedGroup.value === null) {
+    checkedGroup.value = 0
+  }
+})
 </script>
 
 <style lang="scss">

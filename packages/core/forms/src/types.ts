@@ -1,1 +1,1 @@
-export * from './generator/types'
+export * as VFG from './generator/types'

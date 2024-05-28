@@ -588,6 +588,9 @@ importers:
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
       pug:
         specifier: ^3.0.2
         version: 3.0.2

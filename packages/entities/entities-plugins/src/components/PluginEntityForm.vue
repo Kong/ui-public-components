@@ -434,21 +434,30 @@ const getModel = (): Record<string, any> => {
 }
 
 // fired whenever the form data is modified
-const onModelUpdated = (model: any, schema: string) => {
-  const newData = { [schema]: model }
-  if (typeof props.schema[schema]?.modelTransformer === 'function') {
-    newData[schema] = props.schema[schema].modelTransformer(model)
-  }
-  const newModel = Object.assign({}, formModel, newData)
+const onModelUpdated = (value: any, modelKey: string) => {
+  console.log('PluginEntityForm: onModelUpdated', value, modelKey)
+  // const newData = { [modelKey]: value }
+  // if (typeof props.schema[modelKey]?.modelTransformer === 'function') {
+  //   newData[modelKey] = props.schema[modelKey].modelTransformer(value)
+  // }
+  // const newModel = Object.assign({}, formModel, newData)
 
-  Object.assign(formModel, newModel)
+  // Object.assign(formModel, newModel)
 
+  // emit('model-updated', {
+  //   model: formModel,
+  //   originalModel,
+  //   data: getModel(),
+  // })
+}
+
+watch(formModel, (newModel) => {
   emit('model-updated', {
-    model: formModel,
+    model: newModel,
     originalModel,
     data: getModel(),
   })
-}
+}, { deep: true })
 
 // special handling for problematic fields before we emit
 const updateModel = (data: Record<string, any>, parent?: string) => {
@@ -546,10 +555,10 @@ const initFormModel = (): void => {
       if ((props.record.consumer_id || props.record.consumer) || (props.record.service_id || props.record.service) ||
           (props.record.route_id || props.record.route) || (props.record.consumer_group_id || props.record.consumer_group)) {
         updateModel({
-          service_id: props.record.service_id || props.record.service,
-          route_id: props.record.route_id || props.record.route,
-          consumer_id: props.record.consumer_id || props.record.consumer,
-          consumer_group_id: props.record.consumer_group_id || props.record.consumer_group,
+          'service-id': props.record.service_id || props.record.service?.id || props.record.service,
+          'route-id': props.record.route_id || props.record.route?.id || props.record.route,
+          'consumer-id': props.record.consumer_id || props.record.consumer?.id || props.record.consumer,
+          'consumer_group-id': props.record.consumer_group_id || props.record.consumer_group?.id || props.record.consumer_group,
         })
       }
 

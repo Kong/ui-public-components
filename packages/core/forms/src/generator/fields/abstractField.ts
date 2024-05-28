@@ -1,4 +1,6 @@
 // @ts-nocheck
+// DEPRECATED WARNING !!! DO NOT USE THIS FOR NEW FIELDS !!!
+// See: src/composables/useAbstractFields.ts
 
 import debounce from 'lodash-es/debounce'
 import forEach from 'lodash-es/forEach'
@@ -152,20 +154,25 @@ export default {
     },
 
     updateModelValue(newValue, oldValue) {
+      let finalValue = newValue
+      if (typeof this.schema.modelTransformer === 'function') {
+        finalValue = this.schema.modelTransformer(newValue)
+      }
+
       let changed = false
       if (isFunction(this.schema.set)) {
-        this.schema.set(this.model, newValue)
+        this.schema.set(this.model, finalValue)
         changed = true
       } else if (this.schema.model) {
-        this.setModelValueByPath(this.schema.model, newValue)
+        this.setModelValueByPath(this.schema.model, finalValue)
         changed = true
       }
 
       if (changed) {
-        this.$emit('modelUpdated', newValue, this.schema.model)
+        // this.$emit('modelUpdated', finalValue, this.schema.model)
 
         if (isFunction(this.schema.onChanged)) {
-          this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
+          this.schema.onChanged.call(this, this.model, finalValue, oldValue, this.schema)
         }
 
         if (objGet(this.formOptions, 'validateAfterChanged', false) === true) {
@@ -184,13 +191,13 @@ export default {
 
     setModelValueByPath(path, value) {
       // convert array indexes to properties
-      let s = path.replace(/\[(\w+)\]/g, '.$1')
+      let pathStr = path.replace(/\[(\w+)\]/g, '.$1')
 
       // strip a leading dot
-      s = s.replace(/^\./, '')
+      pathStr = pathStr.replace(/^\./, '')
 
       let o = this.model
-      const a = s.split('.')
+      const a = pathStr.split('.')
       let i = 0
       const n = a.length
       while (i < n) {
@@ -219,7 +226,7 @@ export default {
       return slugifyFormID(schema, idPrefix) + (unique ? '-' + uniqueId() : '')
     },
 
-    getLabelId(schema) {
+    getLabelID(schema) {
       return `${this.getFieldID(schema)}-label`
     },
 

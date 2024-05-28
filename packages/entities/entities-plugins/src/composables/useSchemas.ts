@@ -1,5 +1,5 @@
 import { useStringHelpers } from '@kong-ui-public/entities-shared'
-import type { FGCollapsibleOptions, FGSlots } from '@kong-ui-public/forms'
+import type { VFG } from '@kong-ui-public/forms'
 import { customFields, getSharedFormName } from '@kong-ui-public/forms'
 import { PLUGIN_METADATA } from '../definitions/metadata'
 import { aiPromptDecoratorSchema } from '../definitions/schemas/AIPromptDecorator'
@@ -27,22 +27,9 @@ import { type CustomSchemas } from '../types'
 import useI18n from './useI18n'
 import usePluginHelpers from './usePluginHelpers'
 
-export interface Field extends Record<string, any>{
-  model: string
-  required?: boolean
-  styleClasses?: string
-}
-
-export interface Group {
-  legend?: string
-  fields?: Field[]
-  collapsible?: FGCollapsibleOptions
-  slots?: FGSlots
-}
-
 export interface Schema {
-  fields?: Field[]
-  groups?: Group[]
+  fields?: VFG.FieldSchema[]
+  groups?: VFG.FieldGroup[]
 }
 
 export interface UseSchemasOptions {
@@ -68,7 +55,7 @@ export interface UseSchemasOptions {
 }
 
 /** Sorts non-config fields and place them at the top */
-const sortFieldByNonConfigTakePrecedence = (a: Field, b: Field) => {
+const sortFieldByNonConfigTakePrecedence = (a: VFG.Field, b: VFG.Field) => {
   const aIsConfig = a.model.startsWith('config-')
   const bIsConfig = b.model.startsWith('config-')
 
@@ -83,9 +70,9 @@ const sortFieldByNonConfigTakePrecedence = (a: Field, b: Field) => {
   return 0
 }
 
-const sortFieldByOrder = (a: Field, b: Field) => (a.order ?? 0) - (b.order ?? 0)
+const sortFieldByOrder = (a: VFG.Field, b: VFG.Field) => (a.order ?? 0) - (b.order ?? 0)
 
-const sortNonPinnedFields = (a: Field, b: Field) =>
+const sortNonPinnedFields = (a: VFG.Field, b: VFG.Field) =>
   sortFieldByNonConfigTakePrecedence(a, b) || sortFieldByOrder(a, b) || a.model.localeCompare(b.model)
 
 export const useSchemas = (options?: UseSchemasOptions) => {
@@ -328,7 +315,7 @@ export const useSchemas = (options?: UseSchemasOptions) => {
         console.warn(`Unknown checked fields for plugin ${pluginName}: ${unknownRuleFields.join(', ')}`)
       }
 
-      const fieldGroups: Group[] = []
+      const fieldGroups: VFG.FieldGroup[] = []
 
       if (pinnedFields.length > 0) {
         fieldGroups.push({

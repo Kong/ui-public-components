@@ -7,7 +7,7 @@
       class="title"
       @click="contentVisible = !contentVisible"
     >
-      {{ model.name ? model.name : 'New Item' }}
+      {{ value.name ? value.name : 'New Item' }}
       <AddIcon class="metric-add-icon" />
     </div>
     <transition name="slide-fade">
@@ -19,7 +19,7 @@
         <KButton
           appearance="tertiary"
           class="metric-remove-button"
-          @click="$emit('remove-item')"
+          @click="() => emit('remove-item')"
         >
           <TrashIcon />
         </KButton>
@@ -28,22 +28,28 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { AddIcon, TrashIcon } from '@kong/icons'
-import abstractField from '../abstractField'
+import { ref } from 'vue'
+import useAbstractFields, { type AbstractFieldComponentProps } from '../../../composables/useAbstractFields'
 
-export default {
-  name: 'FieldMetric',
-  components: { AddIcon, TrashIcon },
-  mixins: [abstractField],
-  emits: ['remove-item'],
+const props = defineProps<AbstractFieldComponentProps>()
 
-  data() {
-    return {
-      contentVisible: false,
-    }
+const emit = defineEmits<{
+  'remove-item': []
+}>()
+
+const { value, clearValidationErrors } = useAbstractFields(props, {
+  emitModelUpdated: (data) => {
+    // emit('model-updated', data.value, data.modelKey)
   },
-}
+})
+
+defineExpose({
+  clearValidationErrors,
+})
+
+const contentVisible = ref(false)
 </script>
 
 <style lang="scss">

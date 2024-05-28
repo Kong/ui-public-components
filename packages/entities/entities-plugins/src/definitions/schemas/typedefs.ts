@@ -53,7 +53,7 @@ export const fields = {
 
     return {
       type: 'array',
-      itemContainerComponent: 'FieldArrayItem',
+      itemContainerComponent: 'array-item',
       fieldClasses: 'kong-form-array-field',
       fieldItemsClasses: 'kong-form-array-field-item',
       newElementButtonLabelClasses: 'kong-form-new-element-button-label',
