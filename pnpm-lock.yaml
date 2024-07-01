@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -936,6 +932,9 @@ importers:
       compare-versions:
         specifier: ^6.1.0
         version: 6.1.0
+      swrv:
+        specifier: ^1.0.4
+        version: 1.0.4(vue@3.4.27)
     devDependencies:
       '@kong-ui-public/i18n':
         specifier: workspace:^
@@ -3605,7 +3604,7 @@ packages:
     resolution: {integrity: sha512-854ioZ/FB5DNiJcMinD9/a6dj6h/poOsKcb4POhPTzMSM0fHLIQUp//Ufhx7qL6qsepwtLapkgZ3/hAYN7lnBg==}
     requiresBuild: true
     dependencies:
-      '@babel/runtime-corejs3': 7.22.15
+      '@babel/runtime-corejs3': 7.24.4
       '@swagger-api/apidom-core': 0.99.2
       '@swagger-api/apidom-error': 0.99.0
       '@swagger-api/apidom-ns-openapi-3-1': 0.99.2
@@ -3647,7 +3646,7 @@ packages:
     resolution: {integrity: sha512-vgCRaqDLI/SmTECZeKO47RGFFx6MCpOcbSm60sV0/ZJxeK+TgkNjIRJTyuRQNts44K863CWgY+bwzzn1zhNqUg==}
     requiresBuild: true
     dependencies:
-      '@babel/runtime-corejs3': 7.22.15
+      '@babel/runtime-corejs3': 7.24.4
       '@swagger-api/apidom-ast': 0.99.2
       '@swagger-api/apidom-core': 0.99.2
       '@types/ramda': 0.29.8
@@ -3676,7 +3675,7 @@ packages:
     resolution: {integrity: sha512-Rn2YeQKxj6hSijQAzGRRxMYDRIedqHjE69z9xigVbvm+iDXxLJIwasuzFa7BIMRDZF5eAJkBPHXTiU9cXVsl6w==}
     requiresBuild: true
     dependencies:
-      '@babel/runtime-corejs3': 7.22.15
+      '@babel/runtime-corejs3': 7.24.4
       '@swagger-api/apidom-core': 0.99.2
       '@swagger-api/apidom-error': 0.99.0
       '@swagger-api/apidom-ns-json-schema-draft-6': 0.99.2
@@ -3745,7 +3744,6 @@ packages:
 
   /@swagger-api/apidom-ns-openapi-3-1@0.99.2:
     resolution: {integrity: sha512-ubO8vi1dYpIV2a3IKhTkBCf125udoCeUZIc9wrhOFwwHHIKeInGR5L6yxlNhOQm0/doYCth77vEqcuTBpxaIrw==}
-    requiresBuild: true
     dependencies:
       '@babel/runtime-corejs3': 7.22.15
       '@swagger-api/apidom-ast': 0.99.2
@@ -3992,7 +3990,7 @@ packages:
       '@swagger-api/apidom-ns-asyncapi-2': 0.99.2
       '@swagger-api/apidom-ns-openapi-2': 0.99.2
       '@swagger-api/apidom-ns-openapi-3-0': 0.99.2
-      '@swagger-api/apidom-ns-openapi-3-1': 0.99.1
+      '@swagger-api/apidom-ns-openapi-3-1': 0.99.2
       '@swagger-api/apidom-ns-workflows-1': 0.99.2
       '@swagger-api/apidom-parser-adapter-api-design-systems-json': 0.99.2
       '@swagger-api/apidom-parser-adapter-api-design-systems-yaml': 0.99.2
@@ -5438,6 +5436,9 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
     dependencies:
       ajv: 8.12.0
     dev: true
@@ -16270,3 +16271,7 @@ packages:
   /zenscroll@4.0.2:
     resolution: {integrity: sha512-jEA1znR7b4C/NnaycInCU6h/d15ZzCd1jmsruqOKnZP6WXQSMH3W2GL+OXbkruslU4h+Tzuos0HdswzRUk/Vgg==}
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
