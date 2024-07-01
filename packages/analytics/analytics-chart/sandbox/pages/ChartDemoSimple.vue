@@ -236,6 +236,10 @@ import { rand } from '../utils/utils'
 import { lookupDatavisColor } from '../../src/utils'
 import { lookupStatusCodeColor } from '../../src/utils/customColors'
 import type { SandboxNavigationItem } from '@kong-ui-public/sandbox-layout'
+import {
+  KUI_STATUS_COLOR_2XX,
+  KUI_STATUS_COLOR_3XX,
+} from '@kong/design-tokens'
 
 enum Metrics {
   TotalRequests = 'TotalRequests',
@@ -447,8 +451,8 @@ const topNTableData = computed<ExploreResultV4>(() => {
 const colorPalette = ref<AnalyticsChartColors>([...statusCodeDimensionValues.value].reduce((obj, dimension) => ({ ...obj, [dimension]: lookupStatusCodeColor(dimension) || lookupDatavisColor(rand(0, 5)) }), {}))
 
 const twoColorPalette = ref<AnalyticsChartColors>({
-  200: '#008871',
-  300: '#9edca6',
+  200: KUI_STATUS_COLOR_2XX,
+  300: KUI_STATUS_COLOR_3XX,
 })
 
 const updateSelectedColor = (event: Event, label: string) => {
