@@ -15,6 +15,7 @@ const config = mergeConfig(sharedViteConfig, defineConfig({
       name: `kong-ui-public-${sanitizedPackageName}`,
       entry: resolve(__dirname, './src/index.ts'),
       fileName: (format) => `${sanitizedPackageName}.${format}.js`,
+      formats: ['es'],
     },
     rollupOptions: {
       // Make sure to externalize deps that shouldn't be bundled into your library

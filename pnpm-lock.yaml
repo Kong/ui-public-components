@@ -113,6 +113,9 @@ importers:
       rollup-plugin-visualizer:
         specifier: ^5.12.0
         version: 5.12.0(rollup@4.13.0)
+      rollup-plugin-webpack-stats:
+        specifier: ^1.0.2
+        version: 1.0.2(rollup@4.13.0)
       sass:
         specifier: ^1.77.8
         version: 1.77.8
@@ -7575,6 +7578,12 @@ packages:
     peerDependenciesMeta:
       rollup:
         optional: true
+
+  rollup-plugin-webpack-stats@1.0.2:
+    resolution: {integrity: sha512-cdlq54bDL6MmP4hQg/f1SI0jdLlrVKw6C5mCR2JaSX0IsY1rP15X/xq8wn4GdTl1gv0FQpYrLmS1JJrBRwuXBQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      rollup: ^3.0.0 || ^4.0.0
 
   rollup-pluginutils@2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
@@ -16829,6 +16838,10 @@ snapshots:
       source-map: 0.7.4
       yargs: 17.7.2
     optionalDependencies:
+      rollup: 4.13.0
+
+  rollup-plugin-webpack-stats@1.0.2(rollup@4.13.0):
+    dependencies:
       rollup: 4.13.0
 
   rollup-pluginutils@2.8.2:

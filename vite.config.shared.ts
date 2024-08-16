@@ -10,6 +10,7 @@ import VueDevTools from 'vite-plugin-vue-devtools'
 import dns from 'dns'
 import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
+import webpackStatsPlugin from 'rollup-plugin-webpack-stats'
 
 // You can set dns.setDefaultResultOrder('verbatim') to disable the reordering behavior. Vite will then print the address as localhost
 // https://vitejs.dev/config/server-options.html#server-host
@@ -46,6 +47,7 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VueDevTools(),
+    webpackStatsPlugin(),
   ],
   resolve: {
     // Use this option to force Vite to always resolve listed dependencies to the same copy (from project root)
@@ -66,7 +68,7 @@ export default defineConfig({
     outDir: './dist',
     cssCodeSplit: false,
     minify: true,
-    sourcemap: !!process.env.BUILD_VISUALIZER,
+    sourcemap: true,
     rollupOptions: {
       // Make sure to externalize deps that shouldn't be bundled into your library
       // If config.build.rollupOptions.external is also set at the package level, the arrays will be merged
