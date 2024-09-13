@@ -325,9 +325,11 @@ export default {
 
 <style lang="scss" scoped>
 .config-card-details-row {
-  align-items: center;
+  align-items: baseline;
   border-bottom: v-bind('isJsonArray ? "none" : `solid ${KUI_BORDER_WIDTH_10} ${KUI_COLOR_BORDER}`');
+  box-sizing: border-box;
   display: v-bind('isJson && itemHasValue ? "block" : "flex"');
+  gap: $kui-space-60;
   padding: $kui-space-60;
   padding-left: 0;
   width: 100%;
@@ -337,6 +339,8 @@ export default {
 
     label {
       color: $kui-color-text-neutral-stronger;
+      white-space: normal;
+      word-break: break-word;
     }
   }
 
