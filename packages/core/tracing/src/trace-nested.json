@@ -1,0 +1,461 @@
+{
+  "data": [
+      {
+          "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+          "spans": [
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "0d679aa4e7f6dc28",
+              "operationName": "kong.access.plugin.opentelemetry",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "c49c579bb9f7ec80"
+                }
+              ],
+              "startTime": 1725983614992768,
+              "duration": 3374,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "0d679aa4e7f6dc29",
+              "operationName": "kong.io.abc",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "0d679aa4e7f6dc28"
+                }
+              ],
+              "startTime": 1725983614992769,
+              "duration": 1000,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "0d679aa4e7f6dc30",
+              "operationName": "kong.io.def",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "0d679aa4e7f6dc28"
+                }
+              ],
+              "startTime": 1725983614992770,
+              "duration": 2000,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "0d679aa4e7f6dc31",
+              "operationName": "kong.io.xyz",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "0d679aa4e7f6dc30"
+                }
+              ],
+              "startTime": 1725983614992771,
+              "duration": 1000,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "11ff544c0c7eeba1",
+              "operationName": "kong.dns",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "c49c579bb9f7ec80"
+                }
+              ],
+              "startTime": 1725983614996252,
+              "duration": 26386,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "dns.record.domain",
+                  "type": "string",
+                  "value": "httpbin.org"
+                },
+                {
+                  "key": "dns.record.port",
+                  "type": "float64",
+                  "value": 80
+                },
+                {
+                  "key": "dns.record.ip",
+                  "type": "string",
+                  "value": "34.225.9.227"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "client"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "6cb7579ec30e3446",
+              "operationName": "kong.header_filter.plugin.opentelemetry",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "c49c579bb9f7ec80"
+                }
+              ],
+              "startTime": 1725983615257973,
+              "duration": 31,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "c49c579bb9f7ec80",
+              "operationName": "kong",
+              "references": [],
+              "startTime": 1725983614991000,
+              "duration": 267491,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "http.host",
+                  "type": "string",
+                  "value": "localhost"
+                },
+                {
+                  "key": "http.scheme",
+                  "type": "string",
+                  "value": "http"
+                },
+                {
+                  "key": "http.client_ip",
+                  "type": "string",
+                  "value": "127.0.0.1"
+                },
+                {
+                  "key": "kong.request.id",
+                  "type": "string",
+                  "value": "9f4b204ff5459a4af245025835e48536"
+                },
+                {
+                  "key": "http.method",
+                  "type": "string",
+                  "value": "GET"
+                },
+                {
+                  "key": "http.flavor",
+                  "type": "string",
+                  "value": "1.1"
+                },
+                {
+                  "key": "http.status_code",
+                  "type": "int64",
+                  "value": 503
+                },
+                {
+                  "key": "http.route",
+                  "type": "string",
+                  "value": "/"
+                },
+                {
+                  "key": "net.peer.ip",
+                  "type": "string",
+                  "value": "127.0.0.1"
+                },
+                {
+                  "key": "http.url",
+                  "type": "string",
+                  "value": "http://localhost/"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "server"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "fad42d4c4ac3bcc4",
+              "operationName": "kong.router",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "c49c579bb9f7ec80"
+                }
+              ],
+              "startTime": 1725983614992083,
+              "duration": 259,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "internal"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            },
+            {
+              "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+              "spanID": "6a60dac0cf65a635",
+              "operationName": "kong.balancer",
+              "references": [
+                {
+                  "refType": "CHILD_OF",
+                  "traceID": "f5933d2c7832164a91caf99ad59dd21d",
+                  "spanID": "c49c579bb9f7ec80"
+                }
+              ],
+              "startTime": 1725983615022742,
+              "duration": 235748,
+              "tags": [
+                {
+                  "key": "otel.library.name",
+                  "type": "string",
+                  "value": "kong-internal"
+                },
+                {
+                  "key": "otel.library.version",
+                  "type": "string",
+                  "value": "0.1.0"
+                },
+                {
+                  "key": "net.peer.name",
+                  "type": "string",
+                  "value": "httpbin.org"
+                },
+                {
+                  "key": "try_count",
+                  "type": "float64",
+                  "value": 1
+                },
+                {
+                  "key": "net.peer.ip",
+                  "type": "string",
+                  "value": "34.225.9.227"
+                },
+                {
+                  "key": "net.peer.port",
+                  "type": "float64",
+                  "value": 80
+                },
+                {
+                  "key": "span.kind",
+                  "type": "string",
+                  "value": "client"
+                },
+                {
+                  "key": "internal.span.format",
+                  "type": "string",
+                  "value": "proto"
+                }
+              ],
+              "logs": [],
+              "processID": "p1",
+              "warnings": null
+            }
+          ],
+          "processes": {
+              "p1": {
+                  "serviceName": "kong",
+                  "tags": [
+                      {
+                          "key": "service.instance.id",
+                          "type": "string",
+                          "value": "a351da82-3b81-4cc5-b68a-e1efad8a655e"
+                      },
+                      {
+                          "key": "service.version",
+                          "type": "string",
+                          "value": "3.9.0.0"
+                      }
+                  ]
+              }
+          },
+          "warnings": null
+      }
+  ],
+  "total": 0,
+  "limit": 0,
+  "offset": 0,
+  "errors": null
+}

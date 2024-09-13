@@ -666,6 +666,25 @@ importers:
         specifier: ^4.4.5
         version: 4.4.5(vue@3.5.12(typescript@5.6.3))
 
+  packages/core/tracing:
+    dependencies:
+      '@kong/icons':
+        specifier: ^1.18.1
+        version: 1.18.2(vue@3.5.12(typescript@5.6.3))
+    devDependencies:
+      '@kong/design-tokens':
+        specifier: 1.17.2
+        version: 1.17.2
+      '@kong/kongponents':
+        specifier: 9.5.5
+        version: 9.5.5(axios@1.7.7)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
+      '@vueuse/gesture':
+        specifier: ^2.0.0
+        version: 2.0.0(vue@3.5.12(typescript@5.6.3))
+      vue:
+        specifier: ^3.5.4
+        version: 3.5.12(typescript@5.6.3)
+
   packages/entities/entities-certificates:
     dependencies:
       '@peculiar/x509':
@@ -1774,7 +1793,6 @@ packages:
 
   '@evilmartians/lefthook@1.8.2':
     resolution: {integrity: sha512-SZdQk3W9q7tcJwnSwEMUubQqVIK7SHxv52hEAnV7o3nPI+xKcmd+rN0hZIJg07wjBaJRAjzdvoQySKQQYPW5Qw==}
-    cpu: [x64, arm64, ia32]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -1961,6 +1979,14 @@ packages:
       axios: ^1.7.7
       vue: '>= 3.3.4 < 4'
       vue-router: ^4.4.5
+
+  '@kong/kongponents@9.5.5':
+    resolution: {integrity: sha512-0geufybIAFRUb92HDzaRASUEnmKpdpPF1lTABfjJgfy9BJPvvU8Kakw+kMcIl3oAt05zgTx+p2EmpobnSjsmqQ==}
+    engines: {node: '>=v16.20.2 || >=18.12.1 || >=20.14.0'}
+    peerDependencies:
+      axios: ^1.7.5
+      vue: '>= 3.3.4 < 4'
+      vue-router: ^4.4.3
 
   '@kong/markdown@1.7.15':
     resolution: {integrity: sha512-MMSKb+pn6U7tkwWsQ3qxEG0MIIoANjcfz5PzEklb4gY8hAVmtZP1gG3fu3BMJS5fAfx7QJbKnVH//4JyggLesA==}
@@ -3322,6 +3348,15 @@ packages:
   '@vueuse/core@11.1.0':
     resolution: {integrity: sha512-P6dk79QYA6sKQnghrUz/1tHi0n9mrb/iO1WTMk/ElLmTyNqgDeSZ3wcDf6fRBGzRJbeG1dxzEOvLENMjr+E3fg==}
 
+  '@vueuse/gesture@2.0.0':
+    resolution: {integrity: sha512-+F0bhhd8j+gxHaXG4fJgfokrkFfWenQ10MtrWOJk68B5UaTwtJm4EpsZFiVdluA3jpKExG6H+HtroJpvO7Qx0A==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.1
+      vue: ^2.0.0 || >=3.0.0-rc.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   '@vueuse/metadata@11.1.0':
     resolution: {integrity: sha512-l9Q502TBTaPYGanl1G+hPgd3QX5s4CGnpXriVBR5fEZ/goI6fvDaVmIl3Td8oKFurOxTmbXvBPSsgrd6eu6HYg==}
 
@@ -4181,6 +4216,10 @@ packages:
   connect-history-api-fallback@2.0.0:
     resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
     engines: {node: '>=0.8'}
+
+  consola@3.2.3:
+    resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
+    engines: {node: ^14.18.0 || >=16.10.0}
 
   console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
@@ -10780,6 +10819,27 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
+  '@kong/kongponents@9.5.5(axios@1.7.7)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))':
+    dependencies:
+      '@floating-ui/vue': 1.1.5(vue@3.5.12(typescript@5.6.3))
+      '@kong/icons': 1.18.2(vue@3.5.12(typescript@5.6.3))
+      '@popperjs/core': 2.11.8
+      axios: 1.7.7
+      date-fns: 2.30.0
+      date-fns-tz: 2.0.1(date-fns@2.30.0)
+      focus-trap: 7.6.0
+      focus-trap-vue: 4.0.3(focus-trap@7.6.0)(vue@3.5.12(typescript@5.6.3))
+      nanoid: 5.0.7
+      sortablejs: 1.15.3
+      swrv: 1.0.4(vue@3.5.12(typescript@5.6.3))
+      v-calendar: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.12(typescript@5.6.3))
+      vue: 3.5.12(typescript@5.6.3)
+      vue-bind-once: 0.2.1(vue@3.5.12(typescript@5.6.3))
+      vue-draggable-next: 2.2.1(sortablejs@1.15.3)(vue@3.5.12(typescript@5.6.3))
+      vue-router: 4.4.5(vue@3.5.12(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
   '@kong/markdown@1.7.15(@types/markdown-it@14.1.1)(vue@3.5.12(typescript@5.6.3))':
     dependencies:
       '@kong/icons': 1.18.2(vue@3.5.12(typescript@5.6.3))
@@ -12832,6 +12892,14 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  '@vueuse/gesture@2.0.0(vue@3.5.12(typescript@5.6.3))':
+    dependencies:
+      chokidar: 3.6.0
+      consola: 3.2.3
+      upath: 2.0.1
+      vue: 3.5.12(typescript@5.6.3)
+      vue-demi: 0.14.10(vue@3.5.12(typescript@5.6.3))
+
   '@vueuse/metadata@11.1.0': {}
 
   '@vueuse/shared@11.1.0(vue@3.5.12(typescript@5.6.3))':
@@ -13750,6 +13818,8 @@ snapshots:
       proto-list: 1.2.4
 
   connect-history-api-fallback@2.0.0: {}
+
+  consola@3.2.3: {}
 
   console-control-strings@1.1.0: {}
 
