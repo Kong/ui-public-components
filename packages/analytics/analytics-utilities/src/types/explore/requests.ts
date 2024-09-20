@@ -28,6 +28,7 @@ export const queryableRequestDimensions = [
   'service_port',
   'service_protocol',
   'sse',
+  'status_code',
   'status_code_grouped',
   'time',
   'upstream_uri',
