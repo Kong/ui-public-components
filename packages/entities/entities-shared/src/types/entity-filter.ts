@@ -1,3 +1,4 @@
+import type { SelectItem, SelectFilterFunctionParams } from '@kong/kongponents/dist/types'
 import type { Field } from './index'
 
 /** Base filter configuration */
@@ -13,6 +14,10 @@ interface BaseFilterConfig {
  */
 export interface ExactMatchFilterConfig extends BaseFilterConfig {
   isExactMatch: true
+  /** If provided, the filter will be a select input and the query will be the value of the selected item */
+  selectItems?: SelectItem[]
+  /** If selectItems is provided, we can customize the filter function */
+  selectFilterFunction?: (params: SelectFilterFunctionParams) => SelectItem[] | boolean
   /** Placeholder for the exact match filter input */
   placeholder: string
 }

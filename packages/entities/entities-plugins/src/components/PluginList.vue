@@ -404,9 +404,29 @@ const fetcherBaseUrl = computed<string>(() => {
     .replace(/{entityId}/gi, props.config?.entityId || '')
 })
 
+const { flattenPluginMap, filterPlugin } = composables.usePluginSelect({
+  config: {
+    apiBaseUrl: props.config.apiBaseUrl,
+    axiosRequestConfig: props.config.axiosRequestConfig,
+    entityId: props.config.entityId,
+    entityType: props.config.entityType,
+    ...props.config.app === 'konnect' ? {
+      app: 'konnect',
+      controlPlaneId: props.config.controlPlaneId,
+    } : {
+      app: 'kongManager',
+      workspace: props.config.workspace,
+    },
+  },
+  availableOnServer: true,
+  disabledPlugins: {},
+  ignoredPlugins: [],
+})
+
 const filterQuery = ref<string>('')
 const filterConfig = computed<InstanceType<typeof EntityFilter>['$props']['config']>(() => {
   const isExactMatch = (props.config.app === 'konnect' || props.config.isExactMatch)
+  const isEqMatch = (props.config.app === 'kongManager' || props.config.isEqMatch)
 
   if (isExactMatch) {
     return {
@@ -416,6 +436,14 @@ const filterConfig = computed<InstanceType<typeof EntityFilter>['$props']['confi
         id: { label: t('plugins.list.table_headers.id'), sortable: true },
       },
       placeholder: t(`search.placeholder.${props.config.app}`),
+      ...isEqMatch ? {
+        selectItems: Object.entries(flattenPluginMap.value).map(([name, plugin]) => {
+          return { value: name, label: plugin.name, plugin }
+        }),
+        selectFilterFunction: ({ query, items }) => {
+          return items.filter(({ plugin }) => filterPlugin(query, plugin))
+        },
+      } : {},
     } as ExactMatchFilterConfig
   }
 
@@ -776,7 +804,7 @@ onBeforeMount(async () => {
 .kong-ui-entities-plugins-list {
   width: 100%;
 
-  .kong-ui-entity-filter-input {
+  :deep(.kong-ui-entity-filter-input) {
     margin-right: $kui-space-50;
   }
 
