@@ -1,4 +1,6 @@
 // import type { App } from 'vue'
+import TraceQLEditor from './components/traceql/TraceQLEditor.vue'
+import TraceQLEditorLoader from './components/traceql/TraceQLEditorLoader.vue'
 import Waterfall from './components/waterfall/Waterfall.vue'
 
 // Export Vue plugin
@@ -12,4 +14,5 @@ import Waterfall from './components/waterfall/Waterfall.vue'
 //   },
 // }
 
-export { Waterfall }
+export { TraceQLEditor, TraceQLEditorLoader, Waterfall }
+

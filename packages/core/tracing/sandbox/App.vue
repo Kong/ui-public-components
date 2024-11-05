@@ -1,11 +1,8 @@
 <template>
   <div class="sandbox-container">
     <main>
-      <Waterfall />
+      <router-view />
     </main>
   </div>
 </template>
 
-<script setup lang="ts">
-import { Waterfall } from '../src'
-</script>
