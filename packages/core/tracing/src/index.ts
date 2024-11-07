@@ -1,7 +1,10 @@
 // import type { App } from 'vue'
 import TraceQLEditor from './components/traceql/TraceQLEditor.vue'
 import TraceQLEditorLoader from './components/traceql/TraceQLEditorLoader.vue'
-import Waterfall from './components/waterfall/Waterfall.vue'
+import TraceViewer from './components/TraceViewer.vue'
+import WaterfallView from './components/waterfall/WaterfallView.vue'
+
+export * from './utils'
 
 // Export Vue plugin
 // We rarely want to export components as a plugin as we prefer to support proper tree-shaking in the host application. Only enable if you're packing a Vue plugin.
@@ -14,5 +17,5 @@ import Waterfall from './components/waterfall/Waterfall.vue'
 //   },
 // }
 
-export { TraceQLEditor, TraceQLEditorLoader, Waterfall }
+export { TraceQLEditor, TraceQLEditorLoader, TraceViewer, WaterfallView }
 

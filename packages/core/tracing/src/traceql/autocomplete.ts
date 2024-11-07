@@ -1,10 +1,7 @@
 // Source: https://github.com/grafana/grafana/blob/v11.3.0/public/app/plugins/datasource/tempo/traceql/autocomplete.ts
 
-import type { IMarkdownString } from 'monaco-editor'
-
-import type { SelectableValue } from '@grafana/data'
-import { isFetchError } from '@grafana/runtime'
 import type * as Monaco from 'monaco-editor'
+import type { IMarkdownString } from 'monaco-editor'
 
 import type TempoLanguageProvider from './language-provider'
 

@@ -45,7 +45,7 @@ const spacerStyle = computed(() => ({
       position: absolute;
       top: 0;
       left: calc(50% - 0.5px);
-      border-left: 1px solid #ddd;
+      border-left: 1px solid $kui-color-border-neutral-weaker;
       height: 100%;
     }
   }
@@ -56,7 +56,7 @@ const spacerStyle = computed(() => ({
       position: absolute;
       top: 0;
       left: calc(50% - 0.5px);
-      border-left: 1px solid #ddd;
+      border-left: 1px solid $kui-color-border-neutral-weaker;
       height: 100%;
     }
 
@@ -65,7 +65,7 @@ const spacerStyle = computed(() => ({
       position: absolute;
       top: calc(50% - 0.5px);
       left: 50%;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid $kui-color-border-neutral-weaker;
       width: 50%;
     }
   }
@@ -76,7 +76,7 @@ const spacerStyle = computed(() => ({
       position: absolute;
       top: 0;
       left: calc(50% - 0.5px);
-      border-left: 1px solid #ddd;
+      border-left: 1px solid $kui-color-border-neutral-weaker;
       height: 50%;
     }
 
@@ -85,7 +85,7 @@ const spacerStyle = computed(() => ({
       position: absolute;
       top: calc(50% - 0.5px);
       left: 50%;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid $kui-color-border-neutral-weaker;
       width: 50%;
     }
   }

@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import composables from '../../composables'
-import { ProvidedWaterfallConfig, type WaterfallConfig } from './Waterfall.vue'
+import { ProvidedWaterfallConfig, type WaterfallConfig } from './WaterfallView.vue'
 
 let resizeObserver: ResizeObserver | undefined // this should not be reactive
 

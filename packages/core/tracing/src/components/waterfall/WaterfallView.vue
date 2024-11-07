@@ -1,11 +1,9 @@
 <template>
-  <pre>
-viewport = {{ config.viewport }}
-zoom = {{ config.zoom }}
-  </pre>
-
   <div class="waterfall">
-    <div class="waterfall-header">
+    <div
+      v-if="false"
+      class="waterfall-header"
+    >
       <div class="waterfall-actions">
         <KButton
           appearance="tertiary"
@@ -30,8 +28,9 @@ zoom = {{ config.zoom }}
 
     <div class="waterfall-minimap">
       <div class="minimap-label">
-        Minimap
+        <WaterfallSpanLegend />
       </div>
+
       <div class="minimap-wrapper">
         <div
           class="minimap"
@@ -45,9 +44,16 @@ zoom = {{ config.zoom }}
       class="waterfall-rows"
       @wheel.prevent
     >
+      <div class="measurement">
+        <div
+          ref="spanBarMeasurementRef"
+          class="span-bar"
+        />
+      </div>
+
       <WaterfallSpanRow
-        v-if="spanRoots && spanRoots.length > 0"
-        :span-node="spanRoots[0]"
+        v-if="spanRoot"
+        :span-node="spanRoot"
       />
     </div>
   </div>
@@ -65,7 +71,7 @@ export interface WaterfallConfig {
    */
   viewportShift: number
 
-  scaleBounds: {
+  spanBar: {
     x: number
     width: number
   }
@@ -74,6 +80,8 @@ export interface WaterfallConfig {
     left: number
     right: number
   }
+
+  selectedSpan?: SpanTreeNode
 }
 
 export const ProvidedWaterfallConfig = Symbol('ProvidedWaterfallConfig')
@@ -82,11 +90,10 @@ export const ProvidedWaterfallConfig = Symbol('ProvidedWaterfallConfig')
 <script setup lang="ts">
 import { AddIcon, RemoveIcon } from '@kong/icons'
 import { useWheel } from '@vueuse/gesture'
-import type { SpanTreeNode } from 'src/types'
-import { computed, provide, reactive, ref, toRaw, watchEffect, type PropType } from 'vue'
-import spans from '../../spans.json'
-import { buildSpanTrees } from '../../utils'
+import type { SpanTreeNode } from 'src/types/spans'
+import { computed, onMounted, provide, reactive, ref, toRaw, watch, watchEffect, type PropType } from 'vue'
 import WaterfallScale from './WaterfallScale.vue'
+import WaterfallSpanLegend from './WaterfallSpanLegend.vue'
 import WaterfallSpanRow from './WaterfallSpanRow.vue'
 
 const props = defineProps({
@@ -95,32 +102,36 @@ const props = defineProps({
     default: 10,
     validator: (value: number) => value > 1 && Number.isInteger(value),
   },
-  spanRoots: {
-    type: Object as PropType<SpanTreeNode[]>,
-    default: () => buildSpanTrees(spans),
+  spanRoot: {
+    type: Object as PropType<SpanTreeNode>,
+    default: () => undefined,
   },
 })
 
+const emit = defineEmits<{
+  'update:selectedSpan': [span?: SpanTreeNode]
+}>()
+
 const config = reactive<WaterfallConfig>({
   ticks: props.ticks,
-  totalDurationNano: Math.max(...props.spanRoots.map(root => root.durationNano)),
-  startTimeUnixNano: Math.min(...props.spanRoots.map(root => root.startTimeUnixNano)),
+  totalDurationNano: props.spanRoot?.durationNano ?? 0,
+  startTimeUnixNano: props.spanRoot?.startTimeUnixNano ?? 0,
   zoom: 1,
   viewportShift: 0,
-  scaleBounds: { x: 0, width: 0 },
+  spanBar: { x: 0, width: 0 },
   viewport: { left: 0, right: 0 },
 })
 
 provide<WaterfallConfig>(ProvidedWaterfallConfig, config)
 
+let resizeObserver: ResizeObserver
 const waterfallRowsRef = ref<HTMLElement | null>(null)
-const minViewportShift = computed(() => -(config.scaleBounds.width * config.zoom) + config.scaleBounds.width)
+const spanBarMeasurementRef = ref<HTMLElement | null>(null)
+const minViewportShift = computed(() => -(config.spanBar.width * config.zoom) + config.spanBar.width)
 
 useWheel((e) => {
   if (Math.abs(e.delta[0]) > Math.abs(e.delta[1])) {
-    const nextViewportShift = config.viewportShift - e.delta[0]
-    // config.viewportShift = Math.max(minViewportShift.value, Math.min(0, nextViewportShift))
-    const viewportShift = e.delta[0] / config.zoom / config.scaleBounds.width
+    const viewportShift = e.delta[0] / config.zoom / config.spanBar.width
     config.viewport.left += viewportShift
     config.viewport.right -= viewportShift
     if (config.viewport.left < 0) {
@@ -130,15 +141,13 @@ useWheel((e) => {
       config.viewport.left += config.viewport.right
       config.viewport.right = 0
     }
-  } else if (config.scaleBounds.x <= e.event.x && e.event.x <= config.scaleBounds.x + config.scaleBounds.width) {
-    const nextZoom = Math.max(1, config.zoom - e.delta[1] / (waterfallRowsRef.value?.offsetWidth ?? 1) * 4)
-    const zoomDelta = nextZoom - config.zoom
+  } else {
+    const nextZoom = Math.max(1, config.zoom - e.delta[1] / config.spanBar.width * 5)
     const viewportWidth = 1 - config.viewport.left - config.viewport.right
     const nextViewportWidth = 1 / nextZoom
     const viewportWidthDelta = nextViewportWidth - viewportWidth
-    const viewportOrigin = config.viewport.left + viewportWidth / 2
 
-    const zoomOrigin = (e.event.x - config.scaleBounds.x) / config.scaleBounds.width
+    const zoomOrigin = (e.event.x - config.spanBar.x) / config.spanBar.width
 
     config.viewport.left = config.viewport.left - viewportWidthDelta * zoomOrigin
     config.viewport.right = config.viewport.right - viewportWidthDelta * (1 - zoomOrigin)
@@ -160,12 +169,6 @@ useWheel((e) => {
       }
     }
 
-    // const previousWidth = config.scaleBounds.width * config.zoom
-    // const nextWidth = config.scaleBounds.width * nextZoom
-    // const compensation = (previousWidth * 0.5 - nextWidth * zoomOrigin)
-    // config.viewportShift += compensation
-
-
     config.zoom = 1 / (1 - config.viewport.left - config.viewport.right) // nextZoom < 1 ? 1 : nextZoom
   }
 }, {
@@ -181,6 +184,24 @@ const viewportVars = computed(() => ({
   '--viewport-right': `${config.viewport.right * 100}%`,
 }))
 
+onMounted(() => {
+  const measureSpanBar = () => {
+    const { x, width } = spanBarMeasurementRef.value!.getBoundingClientRect()
+    config.spanBar = { x, width }
+  }
+
+  resizeObserver = new ResizeObserver(() => {
+    measureSpanBar()
+  })
+
+  measureSpanBar()
+  resizeObserver.observe(spanBarMeasurementRef.value!)
+})
+
+watch(() => config.selectedSpan, (span) => {
+  emit('update:selectedSpan', span)
+})
+
 // In case
 watchEffect(() => {
   if (config.viewportShift > 0) {
@@ -190,74 +211,92 @@ watchEffect(() => {
   }
 })
 
-console.log(toRaw(props.spanRoots))
+console.log(toRaw(props.spanRoot))
 console.log(toRaw(config))
 </script>
 
 <style lang="scss" scoped>
 .waterfall {
+  --row-label-width: 400px;
+  --span-bar-fading-width: 24px;
+
   box-sizing: border-box;
 
   .waterfall-header,
-  .waterfall-minimap,
-  .waterfall-rows {
+  .waterfall-minimap {
     box-sizing: border-box;
     width: 100%;
     display: grid;
-    grid-template-columns: 300px auto;
+    grid-template-columns: var(--row-label-width) auto;
     column-gap: 10px;
-    padding: 10px;
+    padding: $kui-space-20 0;
   }
 
   .waterfall-header {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid $kui-color-border-neutral-weaker;
 
     .waterfall-actions {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: flex-start;
-      gap: $kui-space-20;
+      gap: $kui-space-40;
     }
 
     .waterfall-scale {}
   }
 
   .waterfall-minimap {
+    align-items: center;
+
     .minimap-label {
       grid-column: 1 / 2;
       font-size: $kui-font-size-20;
-      font-family: $kui-font-family-code;
-      text-align: right;
+      // font-family: $kui-font-family-code;
+      // text-align: right;
     }
 
     .minimap-wrapper {
-      display: grid;
       grid-column: 2 / -1;
-      grid-template-columns: repeat(v-bind("config.ticks * 2"), 1fr);
+      box-sizing: border-box;
+      height: 4px;
+      padding: 0 var(--span-bar-fading-width);
 
       .minimap {
-        grid-column: 2 / -2;
-        background-color: $kui-color-background-neutral-weaker;
-        height: 12px;
         position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: $kui-color-background-neutral-weaker;
+        border-radius: $kui-border-radius-20;
+        overflow: hidden;
 
         &::after {
           content: '';
           position: absolute;
           z-index: 10;
           top: 0;
-          left: var(--viewport-left);
+          left: calc(var(--viewport-left));
           width: calc(100% - var(--viewport-right) - var(--viewport-left));
           height: 100%;
-          background-color: $kui-color-background-neutral-weak;
+          background-color: $kui-color-background-neutral;
         }
       }
     }
+
+
   }
 
   .waterfall-rows {
     font-family: $kui-font-family-code;
+
+    .measurement {
+      display: grid;
+      grid-template-columns: var(--row-label-width) auto;
+
+      .span-bar {
+        grid-column: 2 / -1;
+      }
+    }
   }
 }
 </style>

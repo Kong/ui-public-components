@@ -1,0 +1,173 @@
+[
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "b378c0a18f33ff29",
+    "parentSpanId": "0000000000000000",
+    "traceState": "",
+    "name": "kong",
+    "kind": "SPAN_KIND_SERVER",
+    "startTimeUnixNano": 1730397283958000000,
+    "endTimeUnixNano": 1730397283960931300,
+    "attributes": [
+      { "key": "upstream_host", "value": { "stringValue": "" } },
+      { "key": "net.peer.ip", "value": { "stringValue": "127.0.0.1" } },
+      { "key": "total_net_io_timings_ms", "value": { "stringValue": "{\"redis\":0,\"socket\":0}" } },
+      { "key": "http.status_code", "value": { "intValue": 500 } },
+      { "key": "service_id", "value": { "stringValue": "6ac56e3e-6f02-417b-b683-3d8bcfa7a839" } },
+      { "key": "latency_total_ms", "value": { "intValue": 2 } },
+      { "key": "route_id", "value": { "stringValue": "0cc43df9-d348-4c23-a3fb-1ffcf10500bc" } },
+      { "key": "http.url", "value": { "stringValue": "http://localhost/perf/delay/0" } },
+      { "key": "http.method", "value": { "stringValue": "GET" } },
+      { "key": "http.flavor", "value": { "stringValue": "1.1" } },
+      { "key": "http.scheme", "value": { "stringValue": "http" } },
+      { "key": "upstream_ttfb_ms", "value": { "intValue": 0 } },
+      { "key": "http.route", "value": { "stringValue": "/perf" } },
+      { "key": "http.client_ip", "value": { "stringValue": "127.0.0.1" } },
+      { "key": "kong.request.id", "value": { "stringValue": "1a37be734d784571b63c7b5d04b32f3d" } },
+      { "key": "http.host", "value": { "stringValue": "localhost" } }
+    ],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "c52aafb81d19a245",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.read_client_http_headers",
+    "kind": "SPAN_KIND_SERVER",
+    "startTimeUnixNano": 1730397283957999900,
+    "endTimeUnixNano": 1730397283959228700,
+    "attributes": [
+      { "key": "raw_header_count", "value": { "intValue": 6 } },
+      { "key": "raw_header_size_total", "value": { "intValue": 119 } }
+    ],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "fc7e692e01cd070b",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.phase.rewrite",
+    "kind": "SPAN_KIND_INTERNAL",
+    "startTimeUnixNano": 1730397283959242200,
+    "endTimeUnixNano": 1730397283959332000,
+    "attributes": [],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "1406e0d6a25e93f2",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.phase.access",
+    "kind": "SPAN_KIND_INTERNAL",
+    "startTimeUnixNano": 1730397283959360500,
+    "endTimeUnixNano": 1730397283960500700,
+    "attributes": [],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "2b48959472040fb0",
+    "parentSpanId": "1406e0d6a25e93f2",
+    "traceState": "",
+    "name": "kong.router",
+    "kind": "SPAN_KIND_INTERNAL",
+    "startTimeUnixNano": 1730397283959377400,
+    "endTimeUnixNano": 1730397283959784000,
+    "attributes": [],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "65dc7b34d24e4793",
+    "parentSpanId": "1406e0d6a25e93f2",
+    "traceState": "",
+    "name": "kong.access.plugin.request-transformer",
+    "kind": "SPAN_KIND_SERVER",
+    "startTimeUnixNano": 1730397283960107800,
+    "endTimeUnixNano": 1730397283960450300,
+    "attributes": [{ "key": "instance_id", "value": { "stringValue": "3df512de-8667-4e6d-9c49-70c492f2262e" } }],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 2, "message": "" },
+    "events": [
+      {
+        "timeUnixNano": 1730397283960413400,
+        "attributes": [
+          { "key": "message", "value": { "stringValue": "exception" } },
+          {
+            "key": "exception.message",
+            "value": {
+              "stringValue": "./kong/plugins/request-transformer/handler.lua:20: attempt to index global 'some_nil_variable' (a nil value)"
+            }
+          }
+        ],
+        "droppedAttributesCount": 0,
+        "name": ""
+      }
+    ]
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "6a03b19531d4e9d2",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.phase.header_filter",
+    "kind": "SPAN_KIND_INTERNAL",
+    "startTimeUnixNano": 1730397283960823000,
+    "endTimeUnixNano": 1730397283960864300,
+    "attributes": [],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "adcf1463746d2fa1",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.phase.body_filter",
+    "kind": "SPAN_KIND_SERVER",
+    "startTimeUnixNano": 1730397283960900900,
+    "endTimeUnixNano": 1730397283960931300,
+    "attributes": [],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  },
+  {
+    "traceId": "90298f3b32e7c1eab0329db72b28b26e",
+    "spanId": "2abc8c6a096525bd",
+    "parentSpanId": "b378c0a18f33ff29",
+    "traceState": "",
+    "name": "kong.debug_session.sample",
+    "kind": "SPAN_KIND_INTERNAL",
+    "startTimeUnixNano": 1730397283961137400,
+    "endTimeUnixNano": 1730397283961155600,
+    "attributes": [{ "key": "expression", "value": { "stringValue": "not found" } }],
+    "droppedAttributesCount": 0,
+    "droppedEventsCount": 0,
+    "droppedLinksCount": 0,
+    "status": { "code": 0, "message": "" }
+  }
+]

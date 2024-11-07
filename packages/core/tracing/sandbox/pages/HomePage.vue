@@ -3,6 +3,11 @@
     <li>
       <router-link :to="{ name: 'editor' }">
         Editor
+      </router-link> (This is highly WIP)
+    </li>
+    <li>
+      <router-link :to="{ name: 'trace-viewer' }">
+        TraceViewer
       </router-link>
     </li>
     <li>
