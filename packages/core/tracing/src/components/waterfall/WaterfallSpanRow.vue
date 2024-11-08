@@ -129,7 +129,11 @@ const handleExpand = () => {
 }
 
 const handleSelect = () => {
-  config.selectedSpan = props.spanNode
+  if (config.selectedSpan?.traceId === props.spanNode.traceId && config.selectedSpan?.spanId === props.spanNode.spanId) {
+    config.selectedSpan = undefined
+  } else {
+    config.selectedSpan = props.spanNode
+  }
 }
 
 const barColor = computed(() => {
@@ -248,6 +252,10 @@ const barVars = computed(() => ({
     padding: $kui-space-20 var(--span-bar-fading-width);
     overflow: hidden;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
 
     &::before {
       content: "";
@@ -275,7 +283,6 @@ const barVars = computed(() => ({
       top: 0;
       width: var(--span-bar-fading-width);
       height: 100%;
-      background-color: orchid;
       background: linear-gradient(
         to left,
         white 0%,
@@ -285,7 +292,8 @@ const barVars = computed(() => ({
     }
 
     .bar {
-      height: 100%;
+      height: 12px;
+      width: 100%;
       position: relative;
       z-index: 1;
 

@@ -14,8 +14,17 @@
       class="detail-pane"
       size="50"
     >
-      <div>
+      <div v-if="selectedSpan">
+        <div>
+          Sorry, Just a WIP…
+        </div>
         <pre>{{ selectedSpan }}</pre>
+      </div>
+      <div
+        v-else
+        class="empty-state"
+      >
+        Selected span will be shown here
       </div>
     </Pane>
   </Splitpanes>
@@ -90,10 +99,19 @@ const handleUpdateSelectedSpan = (span?: SpanTreeNode) => {
   .waterfall-pane {
     overflow: scroll;
     padding: $kui-space-20;
+    box-sizing: border-box;
   }
 
   .detail-pane {
     overflow: scroll;
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>
