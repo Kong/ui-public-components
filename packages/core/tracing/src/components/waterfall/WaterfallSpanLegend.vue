@@ -1,5 +1,8 @@
 <template>
   <div class="span-legend">
+    <div class="title">
+      Latency
+    </div>
     <div
       v-for="(presentation, t) in spanPresentations"
       :key="t"
@@ -27,6 +30,10 @@ import { spanPresentations } from '../../constants'
   gap: $kui-space-40;
   font-size: $kui-font-size-30;
 
+  .title {
+    font-weight: $kui-font-weight-semibold;
+  }
+
   .span-legend-item {
     display: flex;
     flex-direction: row;
@@ -35,8 +42,8 @@ import { spanPresentations } from '../../constants'
     gap: $kui-space-20;
 
     .color {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
     }
   }
 }

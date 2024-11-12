@@ -20,9 +20,9 @@ const router = createRouter({
       component: () => import('./pages/EditorPage.vue'),
     },
     {
-      path: '/trace-viewer',
-      name: 'trace-viewer',
-      component: () => import('./pages/TraceViewerPage.vue'),
+      path: '/trace-viewer-slideout',
+      name: 'trace-viewer-slideout',
+      component: () => import('./pages/TraceViewerSlideoutPage.vue'),
     },
     {
       path: '/waterfall',

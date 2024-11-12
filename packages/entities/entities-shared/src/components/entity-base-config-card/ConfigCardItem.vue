@@ -325,18 +325,22 @@ export default {
 
 <style lang="scss" scoped>
 .config-card-details-row {
-  align-items: center;
+  align-items: baseline;
   border-bottom: v-bind('isJsonArray ? "none" : `solid ${KUI_BORDER_WIDTH_10} ${KUI_COLOR_BORDER}`');
   display: v-bind('isJson && itemHasValue ? "block" : "flex"');
   padding: $kui-space-60;
   padding-left: 0;
   width: 100%;
+  gap: $kui-space-60;
+  box-sizing: border-box;
 
   .config-card-details-label {
     width: v-bind('isJson && itemHasValue ? "100%" : props.slim ? "50%" : "25%"');
 
     label {
       color: $kui-color-text-neutral-stronger;
+      white-space: normal;
+      word-break: break-word;
     }
   }
 

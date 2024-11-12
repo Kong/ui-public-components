@@ -4,23 +4,30 @@
     class="waterfall-scale"
   >
     <div
-      v-for="(_, tick) in config.ticks"
+      v-for="(_, tick) in config.ticks - 1"
       :key="`tick-${tick}`"
-      class="waterfall-scale-tick"
+      class="scale-segment"
     >
-      <div class="waterfall-scale-tick-label">
+      <div class="scale-tick-label">
         {{ format(durationShift + tick * tickDuration) }}
+      </div>
+      <div
+        v-if="tick === config.ticks - 2"
+        class="scale-tick-label"
+      >
+        {{ format(durationShift + (tick + 1) * tickDuration) }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import composables from '../../composables'
-import { ProvidedWaterfallConfig, type WaterfallConfig } from './WaterfallView.vue'
-
-let resizeObserver: ResizeObserver | undefined // this should not be reactive
+import {
+  ProvidedWaterfallConfig,
+  type WaterfallConfig,
+} from './WaterfallView.vue'
 
 const format = composables.useDurationFormatter()
 
@@ -28,84 +35,67 @@ const config = inject<WaterfallConfig>(ProvidedWaterfallConfig)!
 const waterfallScaleRef = ref<HTMLElement | null>(null)
 
 const viewportDuration = computed(() => config.totalDurationNano * (1 - config.viewport.left - config.viewport.right))
-const tickDuration = computed(() => (viewportDuration.value) / (config.ticks - 1))
+const tickDuration = computed(() => viewportDuration.value / (config.ticks - 1))
 const durationShift = computed(() => config.totalDurationNano * config.viewport.left)
-
-onMounted(() => {
-  const updateWidth = () => {
-    const { x, width } = waterfallScaleRef.value!.getBoundingClientRect()
-    const tickWidth = width / (config.ticks * 2)
-    config.scaleBounds = {
-      x: x + tickWidth,
-      width: tickWidth * (config.ticks - 1) * 2,
-    }
-  }
-
-  resizeObserver = new ResizeObserver(() => {
-    updateWidth()
-  })
-
-  updateWidth()
-  resizeObserver.observe(waterfallScaleRef.value!)
-})
-
-onUnmounted(() => {
-  resizeObserver?.disconnect()
-})
 </script>
 
 <style lang="scss" scoped>
 .waterfall-scale {
   display: grid;
-  grid-template-columns: repeat(v-bind("config.ticks * 2"), 1fr);
+  grid-template-columns: v-bind("`repeat(${(config.ticks - 1)}, 1fr)`");
   position: relative;
   height: 24px;
 
-  .waterfall-scale-tick {
-    grid-column: span 2;
+  .scale-segment {
     $tick-height: 6px;
     position: relative;
-    padding-bottom: $tick-height;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding-bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: flex-end;
     justify-content: center;
+    border-bottom: 1px solid black;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       bottom: 0;
-      width: 100%;
-      border-bottom: 1px solid black;
-    }
-
-    &:first-child::before {
-      left: calc(50% + 0.5px);
-      width: calc(50% - 0.5px);
-    }
-
-    &:last-child::before {
-      width: calc(50% - 0.5px);
-    }
-
-    // Ticks
-    &::after {
-      content: '';
-      display: block;
-      position: absolute;
-      bottom: 0;
-      left: calc(50% - 0.5px);
-      width: 1px;
       height: $tick-height;
-      background-color: black;
+      border-left: 1px solid black;
     }
 
-    .waterfall-scale-tick-label {
-      text-align: center;
-      bottom: calc(#{$tick-height} + 3px);
-      font-size: $kui-font-size-20;
+    &:last-child {
+      &::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        height: $tick-height;
+        border-left: 1px solid black;
+      }
+    }
+
+    .scale-tick-label {
+      position: absolute;
+      font-family: $kui-font-family-code;
+      font-size: $kui-font-size-10;
       line-height: $kui-line-height-20;
+      bottom: $tick-height;
+
+      &:nth-child(1) {
+        left: 0;
+      }
+
+      &:nth-child(2) {
+        right: 0;
+      }
+    }
+
+    &:not(:first-child) {
+      .scale-tick-label:nth-child(1) {
+        transform: translateX(-50%);
+      }
     }
   }
 }

@@ -1,17 +1,10 @@
 export interface KeyValue {
   key: string;
   value: {
-    stringValue?: string | null;
-    boolValue?: boolean | null;
-    intValue?: number | null;
-  };
-}
-
-export interface Attribute {
-  key: string;
-  value: {
     stringValue?: string;
+    doubleValue?: number;
     intValue?: number;
+    boolValue?: boolean;
   };
 }
 

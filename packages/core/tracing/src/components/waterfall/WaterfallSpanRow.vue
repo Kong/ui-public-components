@@ -1,5 +1,8 @@
 <template>
-  <div :class="['waterfall-span-row', { active }]">
+  <div
+    :class="['waterfall-row', 'waterfall-span-row', { active }]"
+    @click="handleSelect"
+  >
     <div class="label">
       <template v-if="depth > 1">
         <WaterfallSpacer
@@ -17,13 +20,10 @@
       <WaterfallTreeControl
         :expanded="expanded"
         :invisible="!hasChildren"
-        @click="handleExpand"
+        @click.stop="handleExpand"
       />
 
-      <div
-        class="label-content"
-        @click="handleSelect"
-      >
+      <div class="label-content">
         <KTooltip
           class="name"
           :text="spanNode.name"
@@ -122,8 +122,8 @@ const spacerType = computed(() => {
   return SpacerType.Attach
 })
 
-const handleExpand = () => {
-  if (props.spanNode.children) {
+const handleExpand = (e: Event) => {
+  if (hasChildren.value) {
     expanded.value = !expanded.value
   }
 }
@@ -156,11 +156,8 @@ const barColor = computed(() => {
   return spanPresentations[SpanType.KONG].color
 })
 
-const barFixedLeft = computed(
-  () =>
-    ((props.spanNode.startTimeUnixNano - config.startTimeUnixNano) /
-      config.totalDurationNano) *
-    config.zoom,
+const barFixedLeft = computed(() =>
+  ((props.spanNode.startTimeUnixNano - config.startTimeUnixNano) / config.totalDurationNano) * config.zoom,
 )
 
 const barShiftLeft = computed(() => -config.viewport.left * config.zoom)
@@ -170,17 +167,13 @@ const barShift = computed(() => barFixedLeft.value + barShiftLeft.value)
 const barVars = computed(() => ({
   '--bar-color': barColor.value,
   '--bar-shift': `${barShift.value * 100}%`,
-  '--bar-width': `max(3px, ${
-    (props.spanNode.durationNano / config.totalDurationNano) * config.zoom * 100
+  '--bar-width': `max(3px, ${(props.spanNode.durationNano / config.totalDurationNano) * config.zoom * 100
   }%)`,
 }))
 </script>
 
 <style lang="scss" scoped>
 .waterfall-span-row {
-  display: grid;
-  grid-template-columns: var(--row-label-width) auto;
-  column-gap: $kui-space-40;
   position: relative;
   width: 100%;
   box-sizing: border-box;
@@ -192,21 +185,17 @@ const barVars = computed(() => ({
 
     .bar-wrapper {
       &::before {
-        background: linear-gradient(
-          to right,
-          $row-background-color 0%,
-          rgba($row-background-color, 0) 50%,
-          rgba($row-background-color, 0) 100%
-        );
+        background: linear-gradient(to right,
+            $row-background-color 0%,
+            rgba($row-background-color, 0) 50%,
+            rgba($row-background-color, 0) 100%);
       }
 
       &::after {
-        background: linear-gradient(
-          to left,
-          $row-background-color 0%,
-          rgba($row-background-color, 0) 50%,
-          rgba($row-background-color, 0) 100%
-        );
+        background: linear-gradient(to left,
+            $row-background-color 0%,
+            rgba($row-background-color, 0) 50%,
+            rgba($row-background-color, 0) 100%);
       }
     }
   }
@@ -246,6 +235,12 @@ const barVars = computed(() => ({
     }
   }
 
+  &:last-child {
+    .label-content {
+      border-bottom: none;
+    }
+  }
+
   .bar-wrapper {
     position: relative;
     font-size: $kui-font-size-30;
@@ -266,12 +261,10 @@ const barVars = computed(() => ({
       top: 0;
       width: var(--span-bar-fading-width);
       height: 100%;
-      background: linear-gradient(
-        to right,
-        white 0%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
+      background: linear-gradient(to right,
+          white 0%,
+          rgba(255, 255, 255, 0) 50%,
+          rgba(255, 255, 255, 0) 100%);
     }
 
     &::after {
@@ -283,12 +276,10 @@ const barVars = computed(() => ({
       top: 0;
       width: var(--span-bar-fading-width);
       height: 100%;
-      background: linear-gradient(
-        to left,
-        white 0%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
+      background: linear-gradient(to left,
+          white 0%,
+          rgba(255, 255, 255, 0) 50%,
+          rgba(255, 255, 255, 0) 100%);
     }
 
     .bar {

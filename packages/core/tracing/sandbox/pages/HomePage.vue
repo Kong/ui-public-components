@@ -6,8 +6,8 @@
       </router-link> (This is highly WIP)
     </li>
     <li>
-      <router-link :to="{ name: 'trace-viewer' }">
-        TraceViewer
+      <router-link :to="{ name: 'trace-viewer-slideout' }">
+        TraceViewer (slideout)
       </router-link>
     </li>
     <li>

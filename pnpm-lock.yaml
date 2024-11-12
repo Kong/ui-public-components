@@ -668,6 +668,9 @@ importers:
 
   packages/core/tracing:
     dependencies:
+      '@kong-ui-public/entities-shared':
+        specifier: workspace:^
+        version: link:../../entities/entities-shared
       '@kong/icons':
         specifier: ^1.18.1
         version: 1.18.2(vue@3.5.12(typescript@5.6.3))
@@ -681,6 +684,9 @@ importers:
       '@kong/kongponents':
         specifier: 9.5.5
         version: 9.5.5(axios@1.7.7)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
+      '@kong/splitpanes':
+        specifier: 3.1.6-patch.2
+        version: 3.1.6-patch.2(vue@3.5.12(typescript@5.6.3))
       '@lezer/common':
         specifier: ^1.2.3
         version: 1.2.3
@@ -696,9 +702,6 @@ importers:
       prismjs:
         specifier: ^1.29.0
         version: 1.29.0
-      splitpanes:
-        specifier: ^3.1.5
-        version: 3.1.5
       vue:
         specifier: ^3.5.4
         version: 3.5.12(typescript@5.6.3)
@@ -2020,6 +2023,11 @@ packages:
 
   '@kong/sdk-portal-js@2.15.4':
     resolution: {integrity: sha512-zRgjA518C9g5Pyv3oksHK/f4MastP/KBbkgMahUe9LdOWrUFdUScy0jC/8W1PihK6Szd8VhNVgScSfG/2OYy+A==}
+
+  '@kong/splitpanes@3.1.6-patch.2':
+    resolution: {integrity: sha512-8s9TkEMSTlkKmYvhI1fLbcRZZkxMpmB/U+HLMQ4URCC5p9fW9q7E1HfLAvwhCDj6BpaYl0NHnrhDq0UK2kS76Q==}
+    peerDependencies:
+      vue: ^3.2.0
 
   '@kong/swagger-ui-kong-theme-universal@4.3.3':
     resolution: {integrity: sha512-g89NLf7Vu19BJ157fVUkLIrjzTmNE74zGfzktK2rxdZgIUegt4VBDsG8K0MAxDwQELQqSK3kPkamgdD9j1eV3Q==}
@@ -8667,9 +8675,6 @@ packages:
   split@1.0.1:
     resolution: {integrity: sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==}
 
-  splitpanes@3.1.5:
-    resolution: {integrity: sha512-r3Mq2ITFQ5a2VXLOy4/Sb2Ptp7OfEO8YIbhVJqJXoFc9hc5nTXXkCvtVDjIGbvC0vdE7tse+xTM9BMjsszP6bw==}
-
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
@@ -10926,6 +10931,10 @@ snapshots:
       axios: 1.7.4
     transitivePeerDependencies:
       - debug
+
+  '@kong/splitpanes@3.1.6-patch.2(vue@3.5.12(typescript@5.6.3))':
+    dependencies:
+      vue: 3.5.12(typescript@5.6.3)
 
   '@kong/swagger-ui-kong-theme-universal@4.3.3(@babel/core@7.25.2)(axios@1.7.7)(mkdirp@1.0.4)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.22.4)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))':
     dependencies:
@@ -18897,8 +18906,6 @@ snapshots:
   split@1.0.1:
     dependencies:
       through: 2.3.8
-
-  splitpanes@3.1.5: {}
 
   sprintf-js@1.0.3: {}
 

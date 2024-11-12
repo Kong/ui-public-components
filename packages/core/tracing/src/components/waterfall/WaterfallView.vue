@@ -1,63 +1,40 @@
 <template>
-  <div class="waterfall">
-    <div class="dev-interaction">
-      <div>Interaction</div>
-      <div class="radios">
-        <KRadio
-          v-model="interaction"
-          name="test"
-          selected-value="scroll"
-        >
-          Scroll
-        </KRadio>
-        <KRadio
-          v-model="interaction"
-          name="test"
-          selected-value="zoom"
-        >
-          Zoom
-        </KRadio>
-      </div>
-    </div>
-    <div
-      v-if="false"
-      class="waterfall-header"
-    >
-      <div class="waterfall-actions">
-        <KButton
-          appearance="tertiary"
-          icon
-          size="small"
-        >
-          <AddIcon />
-        </KButton>
-        <KButton
-          appearance="tertiary"
-          icon
-          size="small"
-        >
-          <RemoveIcon />
-        </KButton>
+  <div
+    class="waterfall"
+    :style="rootStyle"
+  >
+    <div class="waterfall-sticky-header">
+      <div class="waterfall-row">
+        <div class="minimap-wrapper">
+          <div
+            v-if="interaction === 'zoom'"
+            class="minimap"
+            :style="viewportVars"
+          />
+        </div>
       </div>
 
-      <div class="waterfall-scale">
-        <WaterfallScale v-if="config" />
-      </div>
-    </div>
+      <div class="waterfall-row">
+        <div class="waterfall-actions">
+          <KButton
+            appearance="tertiary"
+            icon
+            size="small"
+          >
+            <AddIcon />
+          </KButton>
+          <KButton
+            appearance="tertiary"
+            icon
+            size="small"
+          >
+            <RemoveIcon />
+          </KButton>
+        </div>
 
-    <div class="waterfall-minimap">
-      <div class="minimap-label">
-        <WaterfallSpanLegend />
-      </div>
-
-      <div
-        v-if="interaction === 'zoom'"
-        class="minimap-wrapper"
-      >
-        <div
-          class="minimap"
-          :style="viewportVars"
-        />
+        <div>
+          <WaterfallScale v-if="config" />
+        </div>
       </div>
     </div>
 
@@ -67,9 +44,9 @@
       :style="rowsAreaStyle"
       @mouseleave="handleRowsAreaLeave"
       @mousemove="handleRowsAreaMove"
-      @wheel="handleWheel"
     >
-      <div class="measurement">
+      <div class="waterfall-row">
+        <div />
         <div class="span-bar-wrapper">
           <div ref="spanBarMeasurementRef" />
         </div>
@@ -101,8 +78,6 @@ export interface WaterfallConfig {
    */
   viewportShift: number;
 
-  spanBarMeasurement?: DOMRect;
-
   viewport: {
     left: number;
     right: number;
@@ -117,17 +92,15 @@ export const ProvidedWaterfallConfig = Symbol('ProvidedWaterfallConfig')
 <script setup lang="ts">
 import { AddIcon, RemoveIcon } from '@kong/icons'
 import { useWheel } from '@vueuse/gesture'
-import type { SpanTreeNode } from 'src/types/spans'
-import { computed, provide, reactive, ref, toRaw, watch, watchEffect, type PropType } from 'vue'
-import composables from '../../composables'
+import { computed, provide, reactive, ref, watch, watchEffect, type PropType } from 'vue'
+import type { SpanTreeNode } from '../../types/spans'
 import WaterfallScale from './WaterfallScale.vue'
-import WaterfallSpanLegend from './WaterfallSpanLegend.vue'
 import WaterfallSpanRow from './WaterfallSpanRow.vue'
 
 const props = defineProps({
   ticks: {
     type: Number,
-    default: 10,
+    default: 6,
     validator: (value: number) => value > 1 && Number.isInteger(value),
   },
   spanRoot: {
@@ -143,12 +116,7 @@ const emit = defineEmits<{
 const interaction = ref<'scroll' | 'zoom'>('scroll')
 const rowsAreaRef = ref<HTMLElement | null>(null)
 const spanBarMeasurementRef = ref<HTMLElement | null>(null)
-const minViewportShift = computed(
-  () => -((config.spanBarMeasurement?.width ?? 0) * config.zoom) + (config.spanBarMeasurement?.width ?? 0),
-)
 const rowsAreaGuideX = ref<number | undefined>(undefined)
-const rowsAreaRect = composables.useBoundingRect(rowsAreaRef)
-const spanBarMeasurementRect = composables.useBoundingRect(spanBarMeasurementRef)
 
 const config = reactive<WaterfallConfig>({
   ticks: props.ticks,
@@ -156,26 +124,19 @@ const config = reactive<WaterfallConfig>({
   startTimeUnixNano: props.spanRoot?.startTimeUnixNano ?? 0,
   zoom: 1,
   viewportShift: 0,
-  spanBarMeasurement: undefined,
   viewport: { left: 0, right: 0 },
 })
 
-watch(
-  spanBarMeasurementRect,
-  (rect) => {
-    config.spanBarMeasurement = rect
-  },
-  { immediate: true },
-)
-
 provide<WaterfallConfig>(ProvidedWaterfallConfig, config)
 
+const getRowsAreaRect = () => rowsAreaRef.value?.getBoundingClientRect()
+const getSBMRect = () => spanBarMeasurementRef.value?.getBoundingClientRect()
+
 const handleRowsAreaMove = (e: MouseEvent) => {
-  if (
-    (config.spanBarMeasurement?.x ?? 0) < e.x &&
-    e.x < (config.spanBarMeasurement?.x ?? 0) + (config.spanBarMeasurement?.width ?? 0)
-  ) {
-    rowsAreaGuideX.value = e.x - (rowsAreaRect.value?.x ?? 0)
+  const rowsAreaRect = getRowsAreaRect()!
+  const sbmRect = getSBMRect()!
+  if (sbmRect.x < e.x && e.x <= sbmRect.x + sbmRect.width) {
+    rowsAreaGuideX.value = e.x - (rowsAreaRect.x ?? 0)
   } else {
     rowsAreaGuideX.value = undefined
   }
@@ -189,6 +150,10 @@ const rowsAreaGuideStyle = computed(() => ({
   transform: `translateX(${rowsAreaGuideX.value}px)`,
 }))
 
+const rootStyle = computed(() => ({
+  overflow: interaction.value === 'zoom' ? 'hidden' : 'scroll',
+}))
+
 const rowsAreaStyle = computed(() => ({
   '--cursor': rowsAreaGuideX.value !== undefined ? 'crosshair' : 'auto',
 }))
@@ -199,25 +164,22 @@ watch(interaction, () => {
   config.viewportShift = 0
 })
 
-const handleWheel = (e: WheelEvent) => {
-  if (interaction.value === 'zoom') {
-    e.preventDefault()
-    return
-  }
-}
-
 useWheel(
   (e) => {
     if (interaction.value !== 'zoom') {
       return
     }
 
-    if (e.event.x < (config.spanBarMeasurement?.x ?? 0)) {
+    e.event.preventDefault()
+
+    const sbmRect = getSBMRect()!
+
+    if (e.event.x < sbmRect.x) {
       return
     }
 
     if (Math.abs(e.delta[0]) > Math.abs(e.delta[1])) {
-      const viewportShift = e.delta[0] / config.zoom / (config.spanBarMeasurement?.width ?? 0)
+      const viewportShift = e.delta[0] / config.zoom / sbmRect.width
       config.viewport.left += viewportShift
       config.viewport.right -= viewportShift
       if (config.viewport.left < 0) {
@@ -228,12 +190,12 @@ useWheel(
         config.viewport.right = 0
       }
     } else {
-      const nextZoom = Math.max(1, config.zoom - (e.delta[1] / (config.spanBarMeasurement?.width ?? 0)) * 4)
+      const nextZoom = Math.max(1, config.zoom - (e.delta[1] / sbmRect.width) * 4)
       const viewportWidth = 1 - config.viewport.left - config.viewport.right
       const nextViewportWidth = 1 / nextZoom
       const viewportWidthDelta = nextViewportWidth - viewportWidth
 
-      const zoomOrigin = (e.event.x - (config.spanBarMeasurement?.x ?? 0)) / (config.spanBarMeasurement?.width ?? 0)
+      const zoomOrigin = (e.event.x - sbmRect.x) / sbmRect.width
 
       config.viewport.left = config.viewport.left - viewportWidthDelta * zoomOrigin
       config.viewport.right = config.viewport.right - viewportWidthDelta * (1 - zoomOrigin)
@@ -260,6 +222,9 @@ useWheel(
   },
   {
     domTarget: rowsAreaRef,
+    eventOptions: {
+      passive: false,
+    },
   },
 )
 
@@ -277,15 +242,17 @@ watch(
 
 // In case
 watchEffect(() => {
-  if (config.viewportShift > 0) {
-    config.viewportShift = 0
-  } else if (config.viewportShift < minViewportShift.value) {
-    config.viewportShift = minViewportShift.value
+  const sbmRect = getSBMRect()
+  if (sbmRect) {
+    const minViewportShift = -(sbmRect.width * config.zoom) + sbmRect.width
+
+    if (config.viewportShift > 0) {
+      config.viewportShift = 0
+    } else if (config.viewportShift < minViewportShift) {
+      config.viewportShift = minViewportShift
+    }
   }
 })
-
-console.log(toRaw(props.spanRoot))
-console.log(toRaw(config))
 </script>
 
 <style lang="scss" scoped>
@@ -295,15 +262,28 @@ console.log(toRaw(config))
   --span-bar-fading-width: #{$kui-space-50};
 
   box-sizing: border-box;
+  height: 100%;
 
-  .waterfall-header,
-  .waterfall-minimap {
+  :deep(.waterfall-row) {
     box-sizing: border-box;
     width: 100%;
     display: grid;
     grid-template-columns: var(--row-label-width) auto;
-    column-gap: 10px;
-    padding: $kui-space-20 0;
+    column-gap: var(--row-column-gap);
+    padding: 0 $kui-space-40;
+
+    &> :nth-child(2) {
+      padding: 0 var(--span-bar-fading-width);
+    }
+  }
+
+  .waterfall-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: $kui-color-background-neutral-weakest;
+    border-bottom: 1px solid $kui-color-border-neutral-weaker;
+    padding: $kui-space-30 0 $kui-space-20;
   }
 
   .waterfall-header {
@@ -316,9 +296,6 @@ console.log(toRaw(config))
       justify-content: flex-start;
       gap: $kui-space-40;
     }
-
-    .waterfall-scale {
-    }
   }
 
   .waterfall-minimap {
@@ -327,15 +304,10 @@ console.log(toRaw(config))
     .minimap-label {
       grid-column: 1 / 2;
       font-size: $kui-font-size-20;
-      // font-family: $kui-font-family-code;
-      // text-align: right;
     }
 
     .minimap-wrapper {
-      grid-column: 2 / -1;
-      box-sizing: border-box;
       height: 4px;
-      padding: 0 var(--span-bar-fading-width);
 
       .minimap {
         position: relative;
@@ -365,16 +337,9 @@ console.log(toRaw(config))
     overflow: hidden;
     cursor: var(--cursor);
 
-    .measurement {
-      display: grid;
-      grid-template-columns: var(--row-label-width) auto;
-      column-gap: var(--row-column-gap);
-      height: 0;
-
-      .span-bar-wrapper {
-        grid-column: 2 / -1;
-        padding: 0 var(--span-bar-fading-width);
-      }
+    .span-bar-measurement {
+      height: 2px;
+      border: 1px solid red;
     }
 
     .guide {

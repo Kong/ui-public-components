@@ -2,8 +2,10 @@
 import TraceQLEditor from './components/traceql/TraceQLEditor.vue'
 import TraceQLEditorLoader from './components/traceql/TraceQLEditorLoader.vue'
 import TraceViewer from './components/TraceViewer.vue'
+import TraceViewerSlideout from './components/TraceViewerSlideout.vue'
 import WaterfallView from './components/waterfall/WaterfallView.vue'
 
+export * from './types'
 export * from './utils'
 
 // Export Vue plugin
@@ -17,5 +19,5 @@ export * from './utils'
 //   },
 // }
 
-export { TraceQLEditor, TraceQLEditorLoader, TraceViewer, WaterfallView }
+export { TraceQLEditor, TraceQLEditorLoader, TraceViewer, TraceViewerSlideout, WaterfallView }
 

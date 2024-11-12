@@ -4,7 +4,6 @@
     :style="svgStyle"
     viewBox="0 0 100 100"
     xmlns="http://www.w3.org/2000/svg"
-    @click="handleClick"
   >
     <polygon
       v-if="!invisible"
@@ -33,8 +32,6 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['click'])
-
 const svgStyle = computed(() => ({
   width: `${props.size}px`,
   height: '100%',
@@ -42,12 +39,6 @@ const svgStyle = computed(() => ({
   minHeight: `${props.size}px`,
   transform: `rotate(${!props.expanded ? -90 : 0}deg)`,
 }))
-
-const handleClick = () => {
-  if (!props.invisible) {
-    emit('click')
-  }
-}
 </script>
 
 <style lang="scss" scoped>
