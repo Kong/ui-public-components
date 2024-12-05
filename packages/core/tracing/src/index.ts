@@ -1,4 +1,5 @@
 // import type { App } from 'vue'
+import PhaseViewer from './components/phase-viewer/PhaseViewer.vue'
 import TraceViewer from './components/trace-viewer/TraceViewer.vue'
 import WaterfallView from './components/waterfall/WaterfallView.vue'
 
@@ -17,5 +18,5 @@ export * from './utils'
 //   },
 // }
 
-export { TraceViewer, WaterfallView }
+export { PhaseViewer, TraceViewer, WaterfallView }
 

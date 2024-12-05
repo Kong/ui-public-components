@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('./pages/TraceViewerPage.vue'),
     },
     {
+      path: '/phase-viewer',
+      name: 'phase-viewer',
+      component: () => import('./pages/PhaseViewerPage.vue'),
+    },
+    {
       path: '/waterfall',
       name: 'waterfall',
       component: () => import('./pages/WaterfallPage.vue'),

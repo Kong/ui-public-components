@@ -1,4 +1,5 @@
 export * from './otlp'
+export * from './phase-viewer'
 export * from './spans'
 export * from './trace-viewer'
 export * from './trace'
