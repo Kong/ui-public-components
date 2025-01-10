@@ -36,12 +36,12 @@ export const registerTheme = () => {
     inherit: true,
     base: 'vs',
     rules: [
-      { token: 'keyword', foreground: '#003694', fontStyle: 'bold' },
       { token: 'operators', foreground: '#003694', fontStyle: 'bold' },
       { token: 'string', foreground: '#009966' },
+      { token: 'string.escape', foreground: '#003694' },
+      { token: 'string.escape.invalid', foreground: '#ff3333' },
       { token: 'number', foreground: '#009966' },
-      { token: 'variable', foreground: '#006699' },
-      { token: 'brackets', foreground: '#993399' },
+      { token: 'identifier', foreground: '#006699' },
     ],
     colors: {
       'editor.foreground': '#000000',
@@ -58,72 +58,62 @@ export const registerLanguage = (schema: Schema) => {
 
   const flatProperties = flattenProperties(schema)
 
-  const keywords = ['not', 'in', 'contains']
-
   monaco.languages.register({ id: languageId })
 
   monaco.languages.setMonarchTokensProvider(languageId, {
-    keywords,
+    keywords: [], // keywords are not used but required
     tokenizer: {
       root: [
-        [/[a-zA-Z][\w$]*/, {
-          cases: {
-            '@keywords': 'keyword',
-            '@default': 'variable',
-          },
-        }],
-        [/[()]/, 'delimiter.parenthesis'],
-        [/==|!=|~|\^=|=\^|>=?|<=?|&&|\|\|/, 'operators'],
-        [/".*?"/, 'string'],
+        [/==|!=|~|\^=|=\^|>=?|<=?|&&|\|\||(not )?in|contains/, 'operators'], // keep this before ident
+        [/[a-zA-Z_]\w*(\.([a-zA-Z_]\w*)?)*/, 'identifier'],
+        [/[ \t\r\n]+/, 'whitespace'],
+        [/[()]/, '@brackets'],
         [/\d+/, 'number'],
+        [/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
+      ],
+      string: [
+        [/[^\\"]+/, 'string'], // escaped quote
+        [/\\[ntr]/, 'string.escape'], // escape sequences
+        [/\\./, 'string.escape.invalid'], // these are invalid escape sequences
+        [/"/, { token: 'string.quote', bracket: '@close', next: '@pop' }],
       ],
     },
-    brackets: [{ open: '(', close: ')', token: 'delimiter.parenthesis' }],
+    brackets: [{ open: '(', close: ')', token: 'brackets' }],
   } as MonarchLanguage)
 
   monaco.languages.registerCompletionItemProvider(languageId, {
-    provideCompletionItems: (model, position) => {
-      const word = model.getWordUntilPosition(position)
-      const range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: word.startColumn,
-        endColumn: word.endColumn,
-      }
-
-      const suggestions = keywords.map((key) => ({
-        label: key,
-        kind: monaco.languages.CompletionItemKind.Keyword,
-        insertText: key,
-        range,
-      }))
-
-      return { suggestions }
-    },
-  })
-
-  monaco.languages.registerCompletionItemProvider(languageId, {
     // additional characters to trigger the following function
-    triggerCharacters: ['.', '*'],
+    triggerCharacters: ['.', '*', '"'],
 
     // function to generate object autocompletion
     provideCompletionItems: (model, position) => {
-      const lineContent = model.getLineContent(position.lineNumber)
-      let startColumn = 0
+      const tokens = monaco.editor.tokenize(model.getValue(), languageId)
+      const lineTokens = tokens[position.lineNumber - 1]
 
-      // find the start of the current word, note that '.' is also considered a word character
-      for (let i = position.column - 2; i >= 0; i--) {
-        if (!/[\w.]/.test(lineContent[i])) {
-          startColumn = i + 2
-          break
+      if (lineTokens.length <= 0) {
+        return { suggestions: [] }
+      }
+
+      let identToken: monaco.Token | undefined
+      let identTokenEnd: number | undefined
+
+      if (lineTokens.length === 1 && lineTokens[0].type === 'identifier.kong-expr-http') {
+        identToken = lineTokens[0]
+        identTokenEnd = model.getLineMaxColumn(position.lineNumber)
+      } else {
+        for (let i = 0; i < lineTokens.length - 1; i++) {
+          if (lineTokens[i + 1].offset >= position.column - 1 && lineTokens[i].type === 'identifier.kong-expr-http') {
+            identToken = lineTokens[i]
+            identTokenEnd = lineTokens[i + 1].offset
+            break
+          }
         }
       }
 
-      const range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn,
-        endColumn: position.column,
+
+
+      if (!identToken) {
+        return { suggestions: [] }
       }
 
       return {
@@ -133,7 +123,12 @@ export const registerLanguage = (schema: Schema) => {
           detail: item.kind,
           documentation: item.documentation,
           insertText: item.property.replace(/\*/g, ''),
-          range,
+          range: {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: identToken.offset + 1,
+            endColumn: identTokenEnd ?? model.getLineMaxColumn(position.lineNumber),
+          },
         })),
       }
     },
