@@ -4,16 +4,17 @@ import type { LifecycleGraph, LifecycleNodeData, SpanNode } from '../types'
 import { getPhaseAndPlugin, unwrapAnyValue } from './spans'
 import { getDurationFormatter } from './time'
 
-const SPAN_NAME_KONG_UPSTREAM_PREFIX = 'kong.upstream.'
-
-export const getNodeType = (spanName: string): LifecycleNodeType => {
-  if (spanName.startsWith(SPAN_NAME_KONG_UPSTREAM_PREFIX)) {
-    return LifecycleNodeType.UPSTREAM
-  }
-  return LifecycleNodeType.REQUEST
-}
-
-const buildPluginNodeData = (node: SpanNode): LifecycleNodeData | undefined => {
+/**
+ * Traverse a plugin span tree and build the {@link LifecycleNodeData} for the plugin and accumulate
+ * the duration that has been excluded from the returned result.
+ *
+ * Currently, nested duration of {@link SPAN_NAMES.CLIENT_HEADERS} and {@link SPAN_NAMES.READ_BODY}
+ * will be excluded from the returned result.
+ *
+ * @param node The root node of the plugin span tree
+ * @returns the node data and the duration that has been excluded
+ */
+const buildPluginNodeData = (node: SpanNode): [LifecycleNodeData, number] | undefined => {
   // Try to parse the phase and plugin name from the span name
   const pluginSpan = getPhaseAndPlugin(node.span.name)
   if (!pluginSpan || pluginSpan.suffix) {
@@ -39,24 +40,32 @@ const buildPluginNodeData = (node: SpanNode): LifecycleNodeData | undefined => {
       return undefined
   }
 
+  let durationExcluded = 0
   let durationNano = node.durationNano ?? 0
 
-  const calculateDuration = (node: SpanNode) => {
-    if (node.span.name === SPAN_NAMES.READ_BODY) {
-      durationNano -= node.durationNano ?? 0
-      return
+  const stack: SpanNode[] = [node]
+  while (stack.length > 0) {
+    const n = stack.pop()!
+    switch (n.span.name) {
+      case SPAN_NAMES.CLIENT_HEADERS:
+      case SPAN_NAMES.READ_BODY:
+        durationNano -= n.durationNano ?? 0
+        durationExcluded += n.durationNano ?? 0
+        // No need to visit the child nodes
+        continue
+      default:
+        // No-op
+        break
     }
-    node.children.forEach(calculateDuration)
+    stack.push(...n.children)
   }
 
-  calculateDuration(node)
-
-  return {
+  return [{
     label: `${pluginSpan.plugin} (${pluginSpan.phase})`,
     type: nodeType,
     durationNano,
     spans: [node],
-  }
+  }, durationExcluded]
 }
 
 export const buildLifecycleGraph = (root: SpanNode): LifecycleGraph => {
@@ -67,37 +76,50 @@ export const buildLifecycleGraph = (root: SpanNode): LifecycleGraph => {
   const responseNodesData: LifecycleNodeData[] = []
   const upstreamSpans: SpanNode[] = []
 
-  const traverse = (node: SpanNode) => {
-    if (node.span.name === SPAN_NAMES.CLIENT_HEADERS || node.span.name === SPAN_NAMES.READ_BODY) {
-      if (node.span.parentSpanId === root.span.spanId) {
-        ingressSpans.push(node)
-      }
-    } else if (node.span.name === SPAN_NAMES.FLUSH_TO_DOWNSTREAM) {
-      if (node.span.parentSpanId === root.span.spanId) {
-        egressSpans.push(node)
-      }
-    } else if (node.span.name.startsWith(SPAN_NAME_KONG_UPSTREAM_PREFIX)) {
-      upstreamSpans.push(node)
-    } else {
-      const pluginNodeData = buildPluginNodeData(node)
-      if (pluginNodeData) {
-        switch (pluginNodeData.type) {
-          case LifecycleNodeType.REQUEST:
-            requestNodesData.push(pluginNodeData)
-            break
-          case LifecycleNodeType.RESPONSE:
-            responseNodesData.push(pluginNodeData)
-            break
-          default:
-            throw new Error('unreachable')
+  let pluginDurationExcluded = 0
+
+  const stack: SpanNode[] = [...root.children]
+  while (stack.length > 0) {
+    const n = stack.pop()!
+    switch (n.span.name) {
+      case SPAN_NAMES.CLIENT_HEADERS:
+      case SPAN_NAMES.READ_BODY:
+        if (n.span.parentSpanId === root.span.spanId) {
+          ingressSpans.push(n)
         }
-        return
+        break
+      case SPAN_NAMES.FLUSH_TO_DOWNSTREAM:
+        if (n.span.parentSpanId === root.span.spanId) {
+          egressSpans.push(n)
+        }
+        break
+      case SPAN_NAMES.KONG_UPSTREAM_SELECTION:
+      case SPAN_NAMES.KONG_WAITING_FOR_UPSTREAM:
+      case SPAN_NAMES.KONG_READ_RESPONSE_FROM_UPSTREAM:
+        upstreamSpans.push(n)
+        break
+      default: {
+        const builtData = buildPluginNodeData(n)
+        if (builtData) {
+          const [nodeData, durationExcluded] = builtData
+          switch (nodeData.type) {
+            case LifecycleNodeType.REQUEST:
+              requestNodesData.push(nodeData)
+              pluginDurationExcluded += durationExcluded
+              break
+            case LifecycleNodeType.RESPONSE:
+              responseNodesData.push(nodeData)
+              pluginDurationExcluded += durationExcluded
+              break
+            default:
+              throw new Error('unreachable')
+          }
+        } else {
+          stack.push(...n.children)
+        }
       }
-      node.children.forEach(traverse)
     }
   }
-
-  root.children.forEach(traverse)
 
   const graph: LifecycleGraph = {
     nodes: [],
@@ -154,7 +176,7 @@ export const buildLifecycleGraph = (root: SpanNode): LifecycleGraph => {
       markerEnd: MarkerType.ArrowClosed,
     }
     if (i === 0) {
-      edge.label = fmt(ingressSpans.reduce((duration, span) => duration + (span.durationNano ?? 0), 0))
+      edge.label = fmt(ingressSpans.reduce((duration, span) => duration + (span.durationNano ?? 0), 0) + pluginDurationExcluded)
     } else if (i === graph.nodes.length - 1) {
       edge.label = fmt(egressSpans.reduce((duration, span) => duration + (span.durationNano ?? 0), 0))
     }

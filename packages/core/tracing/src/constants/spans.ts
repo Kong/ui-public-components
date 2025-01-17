@@ -18,9 +18,13 @@ export const SPAN_ATTR_KEY_KONG_LATENCY_3P_PREFIX = `${SPAN_ATTR_KEY_KONG_LATENC
  * Why not using enums? --Because we don't want to make the list here exhaustive.
  */
 export const SPAN_NAMES = {
-  READ_BODY: 'kong.read_client_http_body',
   CLIENT_HEADERS: 'kong.read_client_http_headers',
+  FIND_UPSTREAM: 'kong.find_upstream',
   FLUSH_TO_DOWNSTREAM: 'kong.wait_for_client_read',
+  KONG_READ_RESPONSE_FROM_UPSTREAM: 'kong.read_response_from_upstream',
+  KONG_UPSTREAM_SELECTION: 'kong.upstream.selection',
+  KONG_WAITING_FOR_UPSTREAM: 'kong.waiting_for_upstream',
+  READ_BODY: 'kong.read_client_http_body',
 }
 
 /**

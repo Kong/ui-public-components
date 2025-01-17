@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash-es'
-import { SPAN_ATTR_KEY_KONG_LATENCY_3P_PREFIX, SPAN_ATTRIBUTE_KEYS, SPAN_LATENCY_ATTR_LABEL_KEYS, SPAN_ZERO_ID } from '../constants'
+import { SPAN_ATTR_KEY_KONG_LATENCY_3P_PREFIX, SPAN_ATTRIBUTE_KEYS, SPAN_LATENCY_ATTR_LABEL_KEYS, SPAN_NAMES, SPAN_ZERO_ID } from '../constants'
 import { type IAnyValue, type IKeyValue, type Span, type SpanLatency, type SpanNode, type SpanTrees } from '../types'
 
 /**
@@ -7,9 +7,9 @@ import { type IAnyValue, type IKeyValue, type Span, type SpanLatency, type SpanN
  * Here we will map them to their new names, and use them in the following steps.
  */
 const MAPPED_SPAN_NAMES: Record<string, string> = {
-  'kong.upstream.try_select': 'kong.find_upstream',
-  'kong.upstream.ttfb': 'kong.waiting_for_upstream',
-  'kong.upstream.read_response': 'kong.read_response_from_upstream',
+  'kong.upstream.try_select': SPAN_NAMES.FIND_UPSTREAM,
+  'kong.upstream.ttfb': SPAN_NAMES.KONG_WAITING_FOR_UPSTREAM,
+  'kong.upstream.read_response': SPAN_NAMES.KONG_READ_RESPONSE_FROM_UPSTREAM,
 }
 
 const compareSpanNode = (a: SpanNode, b: SpanNode) => {
