@@ -198,18 +198,19 @@
       @model-updated="(value: any, model: string) => onModelUpdated(value, model)"
     />
 
-    <KCard
+    <div
       v-if="formModel['config-strategy'] === 'redis'"
       class="rla-form-redis-card"
-      :title="t('rla.redis.title')"
     >
       <VueFormGenerator
         :model="formModel"
         :options="formOptions"
         :schema="advancedSchema.redis"
         @model-updated="(value: any, model: string) => onModelUpdated(value, model)"
+        @partial-toggled="onPartialToggled"
+        @show-new-partial-modal="showNewPartialModal"
       />
-    </KCard>
+    </div>
 
     <VueFormGenerator
       :class="{ 'rla-last-vfg': formModel['config-strategy'] !== 'redis' }"
@@ -328,6 +329,8 @@ const props = defineProps<{
   formModel: Record<string, any>
   formOptions: any
   onModelUpdated: (value: any, model: string) => void
+  onPartialToggled: (field: string, model: any) => void
+  showNewPartialModal: () => void
   isEditing?: boolean
 }>()
 
@@ -375,7 +378,7 @@ const advancedSchema = computed(() => {
 
   return {
     endsWithStrategy: { fields: endsWithStrategy },
-    redis: { fields: redis },
+    redis: { fields: [{ fields: redis, id: '_redis', model: 'redis_partial' }] }, // TODO: replace with real redis partial model name
     afterStrategy: { fields: afterStrategy },
   }
 })
