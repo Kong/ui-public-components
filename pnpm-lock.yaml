@@ -957,6 +957,43 @@ importers:
         specifier: ^4.4.5
         version: 4.4.5(vue@3.5.12(typescript@5.6.3))
 
+  packages/entities/entities-redis-configurations:
+    dependencies:
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
+    devDependencies:
+      '@kong-ui-public/entities-shared':
+        specifier: workspace:^
+        version: link:../entities-shared
+      '@kong-ui-public/entities-vaults':
+        specifier: workspace:^
+        version: link:../entities-vaults
+      '@kong-ui-public/i18n':
+        specifier: workspace:^
+        version: link:../../core/i18n
+      '@kong/design-tokens':
+        specifier: 1.17.2
+        version: 1.17.2
+      '@kong/icons':
+        specifier: ^1.20.0
+        version: 1.20.0(vue@3.5.12(typescript@5.6.3))
+      '@kong/kongponents':
+        specifier: 9.14.8
+        version: 9.14.8(axios@1.7.7)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      axios:
+        specifier: ^1.7.7
+        version: 1.7.7
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.12(typescript@5.6.3)
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.4.5(vue@3.5.12(typescript@5.6.3))
+
   packages/entities/entities-routes:
     dependencies:
       '@kong-ui-public/expressions':
@@ -1799,6 +1836,7 @@ packages:
 
   '@evilmartians/lefthook@1.8.2':
     resolution: {integrity: sha512-SZdQk3W9q7tcJwnSwEMUubQqVIK7SHxv52hEAnV7o3nPI+xKcmd+rN0hZIJg07wjBaJRAjzdvoQySKQQYPW5Qw==}
+    cpu: [x64, arm64, ia32]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -1988,6 +2026,14 @@ packages:
     peerDependencies:
       axios: ^1.7.7
       vue: '>= 3.5.0 < 4'
+      vue-router: ^4.4.5
+
+  '@kong/kongponents@9.14.8':
+    resolution: {integrity: sha512-rKOwzVG9kQJxLGk6cyedWyL5N0hgO5wDvHm/ir82Z+YGuEer8iF3wyGEh9EbcB6YukCNzBBcRASkR1PiyPS6Ag==}
+    engines: {node: '>=v16.20.2 || >=18.12.1 || >=20.14.0'}
+    peerDependencies:
+      axios: ^1.7.7
+      vue: '>= 3.3.4 < 4'
       vue-router: ^4.4.5
 
   '@kong/markdown@1.7.18':
@@ -10849,6 +10895,27 @@ snapshots:
       - react-dom
       - solid-js
       - svelte
+
+  '@kong/kongponents@9.14.8(axios@1.7.7)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))':
+    dependencies:
+      '@floating-ui/vue': 1.1.5(vue@3.5.12(typescript@5.6.3))
+      '@kong/icons': 1.20.0(vue@3.5.12(typescript@5.6.3))
+      '@popperjs/core': 2.11.8
+      axios: 1.7.7
+      date-fns: 2.30.0
+      date-fns-tz: 2.0.1(date-fns@2.30.0)
+      focus-trap: 7.6.1
+      focus-trap-vue: 4.0.3(focus-trap@7.6.1)(vue@3.5.12(typescript@5.6.3))
+      nanoid: 5.0.8
+      sortablejs: 1.15.3
+      swrv: 1.0.4(vue@3.5.12(typescript@5.6.3))
+      v-calendar: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.12(typescript@5.6.3))
+      vue: 3.5.12(typescript@5.6.3)
+      vue-bind-once: 0.2.1(vue@3.5.12(typescript@5.6.3))
+      vue-draggable-next: 2.2.1(sortablejs@1.15.3)(vue@3.5.12(typescript@5.6.3))
+      vue-router: 4.4.5(vue@3.5.12(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
 
   '@kong/markdown@1.7.18(@types/markdown-it@14.1.1)(vue@3.5.12(typescript@5.6.3))':
     dependencies:
