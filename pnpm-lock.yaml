@@ -150,8 +150,8 @@ importers:
         specifier: ~5.6.3
         version: 5.6.3
       uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.4
+        version: 11.0.5
       vite:
         specifier: ^5.4.10
         version: 5.4.10(@types/node@18.19.64)(sass-embedded@1.80.3)(sass@1.80.6)(terser@5.26.0)
@@ -219,8 +219,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1
       uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.4
+        version: 11.0.5
       vue-chartjs:
         specifier: ^5.3.1
         version: 5.3.1(chart.js@4.4.5)(vue@3.5.12(typescript@5.6.3))
@@ -561,8 +561,8 @@ importers:
         specifier: 0.52.0
         version: 0.52.0
       uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.4
+        version: 11.0.5
     devDependencies:
       '@kong/atc-router':
         specifier: 1.6.0-rc.1
@@ -1147,8 +1147,8 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0
       uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.4
+        version: 11.0.5
     devDependencies:
       '@kong-ui-public/i18n':
         specifier: workspace:^
@@ -1799,6 +1799,7 @@ packages:
 
   '@evilmartians/lefthook@1.8.2':
     resolution: {integrity: sha512-SZdQk3W9q7tcJwnSwEMUubQqVIK7SHxv52hEAnV7o3nPI+xKcmd+rN0hZIJg07wjBaJRAjzdvoQySKQQYPW5Qw==}
+    cpu: [x64, arm64, ia32]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -9353,6 +9354,10 @@ packages:
 
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+
+  uuid@11.0.5:
+    resolution: {integrity: sha512-508e6IcKLrhxKdBbcA2b4KQZlLVp2+J5UwQ6F7Drckkc5N9ZJwFa4TgWtsww9UG8fGHbm6gbV19TdM5pQ4GaIA==}
     hasBin: true
 
   uuid@8.3.2:
@@ -19664,6 +19669,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@10.0.0: {}
+
+  uuid@11.0.5: {}
 
   uuid@8.3.2: {}
 
